@@ -3,7 +3,9 @@
 class Plotter {
 
     constructor () {
+        this.path = document.querySelector('svg path');
         this.page = document.querySelector('.plotter');
+
         this.pageDimensions = this.page.getBoundingClientRect();
 
         document.addEventListener('click', this._onPageClick.bind(this));
@@ -11,14 +13,14 @@ class Plotter {
           this.pageDimensions = this.page.getBoundingClientRect();
         });
 
+        this.line = '';
         this.log = [];
     }
 
     _onPageClick(event) {
-      console.log(event);
 
-      let x = event.pageX - this.pageDimensions.left;
-      let y = event.pageY - this.pageDimensions.top;
+      let x = event.pageX - 40;
+      let y = event.pageY - 40;
 
       if (x < 0) {
         x = 0;
@@ -36,12 +38,18 @@ class Plotter {
         y = this.pageDimensions.height;
       }
 
-      // 100 ?
-      // 200 x
-      const percentageX = (x * 100) / this.pageDimensions.width;
-      const percentageY = (y * 100) / this.pageDimensions.height;
+      const percentageX = Math.round((x * 100) / this.pageDimensions.width * 100) / 100;
+      const percentageY = Math.round((y * 100) / this.pageDimensions.height * 100) / 100;
 
-      console.log(percentageX, percentageY);
+      if (this.log.length == 0) {
+        this.line += ` M${x} ${y} `;
+      } else {
+        this.line += ` L${x} ${y} `;
+      }
+
+      console.log(this.line);
+
+      this.path.setAttribute('d', this.line + ' Z');
       this.log.push(`${percentageX}% ${percentageY}%`);
 
       console.log(this.log.join(','));

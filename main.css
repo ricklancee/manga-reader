@@ -8,20 +8,24 @@ html, body {
 }
 
 body {
-  // position: relative;
-  // z-index: -2;
   background: #FAFAFA;
-  font-family: 'Roboto', Arial, sans-serif;
+  font-family: 'Lucida Grande', Arial, sans-serif;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 14px;
+  text-align: center;
 }
 
 .viewer {
   position: relative;
-  margin: 0;
   padding: 0;
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
-  padding: 10px;
+  max-width: 900px;
+  margin: 15px auto;
 }
 
 .viewer .panel,
@@ -30,21 +34,61 @@ body {
   top: 0;
   left: 0;
   display: block;
-  width: 100vw;
+  width: 100%;
   height: auto;
-  max-width: 900px;
   z-index: -1;
 }
 
-.viewer .plotter {
+.plotbox {
+  position: relative;
   display: block;
-  width: 100vw;
+  width: 200vw;
   height: auto;
-  margin: 20px auto;
+  margin: 40px;
 }
 
+.plotbox svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.point {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+
+  width: 5px;
+  height: 5px;
+
+  background-color: red;
+
+  border-radius: 50%;
+
+}
+
+.plotter {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.viewer.fitscreen{
+  width: auto;
+  max-width: 100%;
+}
+.viewer.fitscreen img {
+  width: auto;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .viewer .view-box {
+  height: 100%;
+  width: 100%;
   transform: translate(0px, 0px) translateZ(0);
 }
 
