@@ -13,8 +13,6 @@ class Reader {
 
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
-
-        // polygon(53% 29%,95% 29%,95% 66%,52% 66%)
         this.panels = [
           {
             dimension: {
@@ -43,6 +41,7 @@ class Reader {
         this._drawPanel(this.currentPanelIndex);
 
         this._addEventListeners();
+
         // stop initial flash.
         this.panel.classList.remove('hidden');
     }
@@ -50,7 +49,6 @@ class Reader {
     _addEventListeners() {
       window.addEventListener('resize', this._onWindowResize.bind(this));
       window.addEventListener('keydown', event => {
-        console.log(event.keyCode);
         if (event.keyCode === 39) { // right
           this._nextPanel();
         }
@@ -73,7 +71,6 @@ class Reader {
 
     _drawPanel(index) {
       const panel = this.panels[index];
-      this.currentPanelIndex = index;
 
       let path = panel.path.map(coardinate => {
         return `${coardinate.x}% ${coardinate.y}%`;
@@ -91,6 +88,7 @@ class Reader {
         index = this.panels.length - 1;
       }
 
+      this.currentPanelIndex = index;
       this._drawPanel(index);
     }
 
@@ -102,6 +100,7 @@ class Reader {
         index = 0;
       }
 
+      this.currentPanelIndex = index;
       this._drawPanel(index);
     }
 }
