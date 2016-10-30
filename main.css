@@ -28,14 +28,21 @@ body {
 .viewer .page {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   display: block;
   width: 100vw;
   height: auto;
   max-width: 900px;
   z-index: -1;
 }
+
+.viewer .plotter {
+  display: block;
+  width: 100vw;
+  height: auto;
+  margin: 20px auto;
+}
+
 
 .viewer .view-box {
   transform: translate(0px, 0px) translateZ(0);
@@ -46,7 +53,10 @@ body {
 }
 
 .viewer .page {
-  opacity: 0.1; // debug
+  opacity: 0.1;
+}
+.viewer .page.visible {
+  opacity: 1;
 }
 
 .debug-box {
