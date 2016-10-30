@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+  // position: relative;
+  // z-index: -2;
+  background: #FAFAFA;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
+.viewer {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.viewer .panel,
+.viewer .page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  max-width: 100vw;
+  height: auto;
+  z-index: -1;
+}
+
+.viewer .view-box {
+  transform: translate(0px, 0px);
+}
+
+.viewer .panel.hidden {
+  visibility: hidden;
+}
+
+.viewer .page {
+  opacity: 0.3; // debug
+}
