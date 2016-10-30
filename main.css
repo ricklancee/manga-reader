@@ -28,10 +28,12 @@ body {
 .viewer .page {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: block;
   width: 100vw;
   height: auto;
+  max-width: 900px;
   z-index: -1;
 }
 

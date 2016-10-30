@@ -14,6 +14,7 @@ class Reader {
         this.pageDimensions = null;
         this._calculatePageDimensions();
 
+
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
         this.panels = [
@@ -145,6 +146,7 @@ class Reader {
       }
 
       this.currentPanelIndex = index;
+
       this._drawPanel(index);
       this._positionPageIfNeeded();
     }
