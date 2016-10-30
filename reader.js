@@ -8,6 +8,9 @@ class Reader {
         this.panel = document.querySelector('.viewer .panel');
         this.page = document.querySelector('.viewer .page');
 
+        this.debugBox = document.querySelector('.debug-box');
+        this.debug = true;
+
         this.pageDimensions = null;
         this._calculatePageDimensions();
 
@@ -15,34 +18,47 @@ class Reader {
         this.screenHeight = window.innerHeight;
         this.panels = [
           {
-            dimension: {
-              x: 0,
-              y: 0,
-              width: 95,
-              height: 28
-            },
+            x: 0,
+            y: 0,
+            width: 95,
+            height: 28,
             path: [{x: 0, y: 0}, {x: 95, y: 0}, {x:95, y:28}, {x:0, y:27}]
           },
           {
-            dimension: {
-              x: 52,
-              y: 29,
-              width: 43,
-              height: 37
-            },
+            x: 52,
+            y: 29,
+            width: 43,
+            height: 37,
             path: [{x: 53, y: 29}, {x: 95, y: 29}, {x:95, y:66}, {x:52, y:66}]
+          },
+          {
+            x: 51,
+            y: 67,
+            width: 43,
+            height: 33,
+            path: [{x: 52, y: 67}, {x: 95, y: 67}, {x:95, y:100}, {x:51, y:100}]
+          },
+
+          {
+            x: 0,
+            y: 22,
+            width: 53,
+            height: 78,
+            path: [{x: 0, y: 22}, {x: 53, y: 22}, {x:51, y:100}, {x:0, y:100}]
           }
         ];
 
         console.log(this.pageDimensions);
 
-        this.currentPanelIndex = 1;
+        this.currentPanelIndex = 0;
 
         this._drawPanel(this.currentPanelIndex);
+        this._positionPageIfNeeded();
 
         this._addEventListeners();
 
-        // stop initial flash.
+        // Display the panels after initial setup is complete
+        this.page.classList.remove('hidden');
         this.panel.classList.remove('hidden');
     }
 
@@ -63,6 +79,8 @@ class Reader {
       this._calculatePageDimensions();
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
+
+      this._positionPageIfNeeded();
     }
 
     _calculatePageDimensions() {
@@ -77,8 +95,20 @@ class Reader {
       }).join(',');
 
       this.panel.setAttribute('style',
-        `-webkit-clip-path: polygon(${path}); clip-path: polygon(${path});`
+        `-webkit-clip-path: polygon(${path}); clip-path: polygon(${path});
+        clip-path: polygon(${path}); clip-path: polygon(${path});`
       );
+    }
+
+    _positionPageIfNeeded() {
+      const panel = this.panels[this.currentPanelIndex];
+
+      if (this.debug) {
+        this.debugBox.style.top = panel.y * this.pageDimensions.height / 100 + 'px';
+        this.debugBox.style.left = panel.x * this.pageDimensions.width / 100 + 'px';
+        this.debugBox.style.width = panel.width * this.pageDimensions.width / 100 + 'px';
+        this.debugBox.style.height = panel.height * this.pageDimensions.height / 100 + 'px';
+      }
     }
 
     _nextPanel() {
@@ -90,6 +120,7 @@ class Reader {
 
       this.currentPanelIndex = index;
       this._drawPanel(index);
+      this._positionPageIfNeeded();
     }
 
 
@@ -102,6 +133,7 @@ class Reader {
 
       this.currentPanelIndex = index;
       this._drawPanel(index);
+      this._positionPageIfNeeded();
     }
 }
 

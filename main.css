@@ -39,10 +39,22 @@ body {
   transform: translate(0px, 0px);
 }
 
-.viewer .panel.hidden {
+.viewer .hidden {
   visibility: hidden;
 }
 
 .viewer .page {
   opacity: 0.3; // debug
+}
+
+.debug-box {
+  position: absolute;
+  height: 0;
+  width: 0;
+  left: 0;
+  top: 0;
+  background-color: #ff4040;
+  opacity: 0.5;
+  z-index: 10;
+  pointer-events: none;
 }
