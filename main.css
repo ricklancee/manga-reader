@@ -12,20 +12,28 @@ body {
   font-family: 'Lucida Grande', Arial, sans-serif;
 }
 
+main {
+  display: flex;
+}
+
 h1 {
   font-weight: 300;
   font-size: 14px;
+  margin-left:10px;
+  margin-right:10px;
+  margin-top:10px;
   text-align: center;
 }
 
 .viewer {
+  flex 1;
   position: relative;
   padding: 0;
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
   max-width: 900px;
-  margin: 15px auto;
+  margin: 0 auto;
 }
 
 .viewer .panel,
@@ -36,6 +44,7 @@ h1 {
   display: block;
   width: 100%;
   height: auto;
+  margin: 10px 0;
   z-index: -1;
 }
 
@@ -102,4 +111,15 @@ h1 {
 }
 .viewer .page.visible {
   opacity: 1;
+}
+
+.debug-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(255, 64, 64, 0.17);
+  border: 1px solid #ff4040;
+  z-index: 10;
 }

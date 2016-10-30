@@ -8,10 +8,12 @@ class Reader {
         this.panel = document.querySelector('.viewer .panel');
         this.page = document.querySelector('.viewer .page');
 
+        this.debug = false;
+        this.fitScreen = true;
+
         this.pageDimensions = null;
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
-        this.fitScreen = false;
 
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
@@ -55,32 +57,32 @@ class Reader {
             image: 'images/manga/02.jpg',
             panels: [
               {
-                x: 63,
+                x: 63.86,
                 y: 0,
-                width: 95,
-                height: 28,
-                path: '63.86% 0%,100% 0%,100% 60.04%,66.47% 60.17%'
+                width: 36.14,
+                height: 60.17,
+                path: "63.86% 0%,100% 0%,100% 60.04%,66.47% 60.17%"
               },
               {
-                x: 4,
+                x: 4.87,
                 y: 0,
-                width: 95,
-                height: 28,
-                path: '4.87% 0%,63.6% 0%,64.66% 21.21%,4.92% 21.14%'
+                width: 59.79,
+                height: 21.21,
+                path: "4.87% 0%,63.6% 0%,64.66% 21.21%,4.92% 21.14%"
               },
               {
-                x: 5,
-                y: 22,
-                width: 95,
-                height: 28,
-                path: '5.02% 22.73%,64.76% 22.66%,66.52% 60.24%,5.42% 60.34%'
+                x: 5.02,
+                y: 22.66,
+                width: 61.5,
+                height: 37.68,
+                path: "5.02% 22.73%,64.76% 22.66%,66.52% 60.24%,5.42% 60.34%"
               },
               {
-                x: 5,
-                y: 61,
-                width: 95,
-                height: 28,
-                path: '5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%'
+                x: 5.27,
+                y: 61.69,
+                width: 94.73,
+                height: 38.31,
+                path: "5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%"
               }
             ]
           }
@@ -101,6 +103,10 @@ class Reader {
 
           this._drawPanel(this.currentPanelIndex);
           this._positionPageIfNeeded();
+
+          if (this.debug) {
+            this._drawDebugPanels();
+          }
 
           // Display the panels after initial setup is complete
           this.page.classList.remove('hidden');
@@ -156,6 +162,27 @@ class Reader {
       );
     }
 
+    _drawDebugPanels() {
+      document.querySelectorAll('.debug-box').forEach(node => node.remove());
+
+      const box = document.createElement('div');
+      box.classList.add('debug-box');
+
+      const panels = this.pages[this.currentPageIndex].panels;
+      for (var i = 0; i < panels.length; i++) {
+        const clone = box.cloneNode();
+
+        console.log(panels[i].x * this.pageDimensions.width / 100);
+
+        clone.style.left = panels[i].x * this.pageDimensions.width / 100 + 'px';
+        clone.style.top = (panels[i].y * this.pageDimensions.height / 100) + this.pageDimensions.top + 'px';
+        clone.style.width = panels[i].width * this.pageDimensions.width / 100 + 'px';
+        clone.style.height = panels[i].height * this.pageDimensions.height / 100 + 'px';
+
+        this.viewerEl.appendChild(clone);
+      }
+    }
+
     _positionPageIfNeeded() {
       const panel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
 
@@ -165,13 +192,11 @@ class Reader {
       const panelWidth = panel.width * this.pageDimensions.width / 100;
       const panelHeight = panel.height * this.pageDimensions.height / 100;
 
-      console.log(panelY);
-
       // Check if panel is off screen.
-      if ((panelHeight + panelY) - this.pageOffsetY > this.screenHeight) {
+      if ((panelHeight + panelY) - this.pageOffsetY > this.screenHeight - this.pageDimensions.top) {
         // calculate where to scoll
         console.log('offscreen');
-        this.pageOffsetY = (panelHeight + panelY) - this.screenHeight + 20// add some padding;
+        this.pageOffsetY = panelY;
       }
 
       if (panelY < this.pageOffsetY) {
@@ -272,6 +297,11 @@ class Reader {
         this._calculatePageDimensions();
         this._drawPanel(0);
         this._positionPageIfNeeded();
+
+        if (this.debug) {
+          this._drawDebugPanels();
+        }
+
         this.page.classList.remove('hidden');
         this.panel.classList.remove('hidden');
       });

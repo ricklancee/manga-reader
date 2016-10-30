@@ -47,12 +47,42 @@ class Plotter {
         this.line += ` L${x} ${y} `;
       }
 
-      console.log(this.line);
-
       this.path.setAttribute('d', this.line + ' Z');
       this.log.push(`${percentageX}% ${percentageY}%`);
 
-      console.log(this.log.join(','));
+      let panel = this.calculateRectangle(this.log);
+      // panel.path = this.log.join(',');
+      panel.path = '5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%';
+      console.log(panel)
+    }
+
+    calculateRectangle(panel) {
+      panel = '5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%'.split(',');
+
+      var x = panel.map(coards => {
+        coards = coards.replace('%', '');
+        coards = coards.split(' ');
+        return parseFloat(coards[0]);
+      });
+
+      var y = panel.map(coards => {
+        coards = coards.replace('%', '');
+        coards = coards.split(' ');
+        return parseFloat(coards[1]);
+      });
+
+      const lowestX = Math.min.apply(Math, x);
+      const lowestY = Math.min.apply(Math, y);
+      const highestX = Math.max.apply(Math, x);
+      const highestY = Math.max.apply(Math, y);
+
+      return {
+        x: lowestX,
+        y: lowestY,
+        width:  Math.round((highestX - lowestX) * 100) / 100,
+        height: Math.round((highestY - lowestY) * 100) / 100
+      }
+
     }
 
 }
