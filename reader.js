@@ -9,7 +9,7 @@ class Reader {
         this.page = document.querySelector('.viewer .page');
 
         this.debugBox = document.querySelector('.debug-box');
-        this.debug = true;
+        this.debug = false;
 
         this.pageDimensions = null;
         this._calculatePageDimensions();
@@ -57,6 +57,8 @@ class Reader {
 
         this._addEventListeners();
 
+        this.pageOffsetY = 0;
+
         // Display the panels after initial setup is complete
         this.page.classList.remove('hidden');
         this.panel.classList.remove('hidden');
@@ -103,12 +105,36 @@ class Reader {
     _positionPageIfNeeded() {
       const panel = this.panels[this.currentPanelIndex];
 
+      // Figure out the Panel position on the page in pixels.
+      const panelY = panel.y * this.pageDimensions.height / 100;
+      const panelX = panel.x * this.pageDimensions.width / 100;
+      const panelWidth = panel.width * this.pageDimensions.width / 100;
+      const panelHeight = panel.height * this.pageDimensions.height / 100;
+
       if (this.debug) {
-        this.debugBox.style.top = panel.y * this.pageDimensions.height / 100 + 'px';
-        this.debugBox.style.left = panel.x * this.pageDimensions.width / 100 + 'px';
-        this.debugBox.style.width = panel.width * this.pageDimensions.width / 100 + 'px';
-        this.debugBox.style.height = panel.height * this.pageDimensions.height / 100 + 'px';
+        this.debugBox.style.top = panelY + 'px';
+        this.debugBox.style.left = panelX + 'px';
+        this.debugBox.style.width = panelWidth + 'px';
+        this.debugBox.style.height = panelHeight + 'px';
       }
+
+      // Check if panel is off screen.
+      if ((panelHeight + panelY) - this.pageOffsetY > this.screenHeight) {
+        // Panel is partially off screen.
+        console.log('panel is off screen');
+
+        // figure out by how many pixels it is off screen.
+        this.pageOffsetY = (panelHeight + panelY) - this.screenHeight + 20// add some padding;
+      }
+
+      if (panelY < this.pageOffsetY) {
+        // figure out by how much
+        console.log('offset: panel offscreen');
+
+        this.pageOffsetY = panelY;
+      }
+
+      this.viewerEl.scrollTop =this.pageOffsetY;
     }
 
     _nextPanel() {

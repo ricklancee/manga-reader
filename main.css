@@ -20,7 +20,7 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
   padding: 10px;
 }
 
@@ -30,13 +30,13 @@ body {
   top: 0;
   left: 0;
   display: block;
-  max-width: 100vw;
+  width: 100vw;
   height: auto;
   z-index: -1;
 }
 
 .viewer .view-box {
-  transform: translate(0px, 0px);
+  transform: translate(0px, 0px) translateZ(0);
 }
 
 .viewer .hidden {
@@ -44,7 +44,7 @@ body {
 }
 
 .viewer .page {
-  opacity: 0.3; // debug
+  opacity: 0.1; // debug
 }
 
 .debug-box {
