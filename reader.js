@@ -11,6 +11,7 @@ class Reader {
         this.pageDimensions = null;
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
+        this.fitScreen = false;
 
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
@@ -88,7 +89,15 @@ class Reader {
         this._addEventListeners();
 
         this._loadImage(this.pages[this.currentPageIndex].image).then(_ => {
+          if (this.fitScreen) {
+            this.viewerEl.classList.add('fitscreen');
+          }
+
           this._calculatePageDimensions();
+
+          if (this.fitScreen) {
+            this.viewerEl.style.width = this.pageDimensions.width + 'px';
+          }
 
           this._drawPanel(this.currentPanelIndex);
           this._positionPageIfNeeded();
@@ -124,6 +133,9 @@ class Reader {
 
     _recalc() {
       this._calculatePageDimensions();
+      if (this.fitScreen) {
+        this.viewerEl.style.width = this.pageDimensions.width + 'px';
+      }
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
       this._positionPageIfNeeded();
@@ -153,9 +165,12 @@ class Reader {
       const panelWidth = panel.width * this.pageDimensions.width / 100;
       const panelHeight = panel.height * this.pageDimensions.height / 100;
 
+      console.log(panelY);
+
       // Check if panel is off screen.
       if ((panelHeight + panelY) - this.pageOffsetY > this.screenHeight) {
         // calculate where to scoll
+        console.log('offscreen');
         this.pageOffsetY = (panelHeight + panelY) - this.screenHeight + 20// add some padding;
       }
 
@@ -164,7 +179,7 @@ class Reader {
         this.pageOffsetY = panelY;
       }
 
-      this.viewerEl.scrollTop =this.pageOffsetY;
+      this.viewerEl.scrollTop = this.pageOffsetY;
     }
 
     _nextPanel() {
@@ -240,6 +255,9 @@ class Reader {
     }
 
     _loadPage(index) {
+      this.page.classList.add('hidden');
+      this.panel.classList.add('hidden');
+
       this.viewBox.innerHTML = '';
 
       this.panel.removeAttribute('style');
@@ -254,6 +272,8 @@ class Reader {
         this._calculatePageDimensions();
         this._drawPanel(0);
         this._positionPageIfNeeded();
+        this.page.classList.remove('hidden');
+        this.panel.classList.remove('hidden');
       });
     }
 }
