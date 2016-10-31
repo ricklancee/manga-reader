@@ -40,6 +40,7 @@ class MangaReader extends HTMLElement {
         this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
           || false;
         this._pagination = true;
+        this._opacity = 0.05;
 
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
@@ -211,7 +212,7 @@ class MangaReader extends HTMLElement {
       this.canvas.save();
       this.canvasEl.width = image.width;
       this.canvasEl.height = image.height;
-      this.canvas.globalAlpha = 0.1;
+      this.canvas.globalAlpha = this._opacity;
       this.canvas.drawImage(image, 0, 0);
       this.canvas.globalAlpha = 1;
       this.canvas.restore();
