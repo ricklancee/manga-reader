@@ -196,7 +196,7 @@ class Reader {
       for (var i = 0; i < drawUpTo; i++) {
         this._drawPanel(i);
 
-        if (i !== max) {
+        if (i !== drawUpTo-1) {
           const clone = this.panel.cloneNode();
           this.viewBox.appendChild(clone);
         }
