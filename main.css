@@ -50,3 +50,22 @@ manga-reader canvas {
   background: #fff;
 }
 
+manga-reader .pagination {
+  display: block;
+  width: 100%;
+  list-style: none;
+  margin: 18px 0;
+  padding:0;
+  text-align: center;
+}
+
+manga-reader .pagination li {
+  padding:0;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+manga-reader .pagination a.active {
+  text-decoration: none;
+  font-weight: bold;
+}

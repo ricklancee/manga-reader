@@ -61,10 +61,12 @@ class MangaReader extends HTMLElement {
         this._loadData().then(data => {
           this.pages = data;
 
-          const pagination = this._getPaginationFromHash();
-          if (pagination) {
-            this.currentPageIndex = pagination[0];
-            this.currentPanelIndex = pagination[1];
+          this._createPagination();
+
+          const hashPagination = this._getPaginationFromHash();
+          if (hashPagination) {
+            this.currentPageIndex = hashPagination[0];
+            this.currentPanelIndex = hashPagination[1];
           }
 
           this._setPage(this.currentPageIndex)
@@ -72,6 +74,7 @@ class MangaReader extends HTMLElement {
               this._recalcPage();
               this._drawPanels(this.currentPanelIndex);
               this._setPaginationHash();
+              this._setActivePagination();
               this._positionView();
             });
         });
@@ -106,6 +109,12 @@ class MangaReader extends HTMLElement {
       window.location.hash = currentPage + '-' + currentPanel;
     }
 
+    _setActivePagination() {
+      this.querySelectorAll('.pagination a').forEach(link => link.classList.remove('active'));
+      this.querySelectorAll('.pagination a[data-index="'+this.currentPageIndex+'"]')
+      .forEach(link => link.classList.add('active'));
+    }
+
     _addEventListeners() {
       window.addEventListener('resize', _ => {
         this._recalcPage();
@@ -119,6 +128,12 @@ class MangaReader extends HTMLElement {
         if (event.keyCode === 37) { // left
           this.previousPanel();
           event.preventDefault();
+        }
+      });
+
+      this.addEventListener('click', event => {
+        if (event.target.classList.contains('pagination-link')) {
+          window.location.reload();
         }
       });
     }
@@ -173,6 +188,30 @@ class MangaReader extends HTMLElement {
       this.canvasEl = canvas;
       this.canvas = canvas.getContext('2d');
       this.appendChild(canvas);
+    }
+
+    _createPagination() {
+      const list = document.createElement('ol');
+      list.classList.add('pagination');
+
+      const maxPages = this.pages.length;
+
+      for (var i = 0; i < maxPages; i++) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        let page = (i + 1 < 10) ? '0' + (i + 1) : i + 1;
+        a.innerHTML = page;
+        a.classList.add('pagination-link');
+        a.setAttribute('data-index', i);
+        a.href = '#'+page+'-01';
+
+        li.appendChild(a);
+        list.appendChild(li);
+      }
+
+      this.insertBefore(list, this.firstChild);
+
+      this.lastChild.parentNode.insertBefore(list.cloneNode(true), this.lastChild.nextSibling);
     }
 
     _loadImage(url) {
@@ -312,6 +351,7 @@ class MangaReader extends HTMLElement {
         this._recalcPage();
         this._drawPanels(this.currentPanelIndex);
         this._setPaginationHash();
+        this._setActivePagination();
         this._positionView();
       });
     }
@@ -330,6 +370,7 @@ class MangaReader extends HTMLElement {
         this._recalcPage();
         this._drawPanels(this.currentPanelIndex);
         this._setPaginationHash();
+        this._setActivePagination();
         this._positionView();
       });
     }

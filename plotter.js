@@ -6,11 +6,21 @@ class Plotter {
         this.path = document.querySelector('svg path');
         this.page = document.querySelector('.plotter');
 
-        this.pageDimensions = this.page.getBoundingClientRect();
+        const recalc = () => {
+          const BCR = this.page.getBoundingClientRect();
+          this.pageDimensions = {
+            top: BCR.top + window.scrollY,
+            left: BCR.left + window.scrollX,
+            width: BCR.width,
+            height: BCR.height
+          }
+        }
+
+        recalc();
 
         document.addEventListener('click', this._onPageClick.bind(this));
         window.addEventListener('resize', () => {
-          this.pageDimensions = this.page.getBoundingClientRect();
+          recalc();
         });
 
         this.line = '';
@@ -19,8 +29,8 @@ class Plotter {
 
     _onPageClick(event) {
 
-      let x = event.pageX - 40;
-      let y = event.pageY - 40;
+      let x = event.pageX - this.pageDimensions.left;
+      let y = event.pageY - this.pageDimensions.top;
 
       if (x < 0) {
         x = 0;
