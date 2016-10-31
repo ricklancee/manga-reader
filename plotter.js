@@ -19,6 +19,14 @@ class Plotter {
         recalc();
 
         document.addEventListener('click', this._onPageClick.bind(this));
+        document.addEventListener('keydown', event => {
+          if (event.keyCode == 13) {
+            console.log(this.data);
+            this.log= [];
+            this.line ='';
+            this.path.setAttribute('d', '');
+          }
+        });
         window.addEventListener('resize', () => {
           recalc();
         });
@@ -58,24 +66,22 @@ class Plotter {
       }
 
       this.path.setAttribute('d', this.line + ' Z');
-      this.log.push(`${percentageX}% ${percentageY}%`);
+      this.log.push(`${percentageX} ${percentageY}`);
 
       let panel = this.calculateRectangle(this.log);
       panel.path = this.log.join(',');
 
-      console.log(JSON.stringify(panel));
+      this.data = JSON.stringify(panel);
     }
 
     calculateRectangle(panel) {
 
       var x = panel.map(coards => {
-        coards = coards.replace('%', '');
         coards = coards.split(' ');
         return parseFloat(coards[0]);
       });
 
       var y = panel.map(coards => {
-        coards = coards.replace('%', '');
         coards = coards.split(' ');
         return parseFloat(coards[1]);
       });
