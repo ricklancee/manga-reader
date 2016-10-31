@@ -41,7 +41,6 @@ class MangaReader extends HTMLElement {
           || false;
         this._pagination = true;
 
-        // Page variables
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
 
@@ -61,12 +60,49 @@ class MangaReader extends HTMLElement {
         this._loadData().then(data => {
           this.pages = data;
 
+          const pagination = this._getPaginationFromHash();
+          if (pagination) {
+            this.currentPageIndex = pagination[0];
+            this.currentPanelIndex = pagination[1];
+          }
+
           this._setPage(this.currentPageIndex)
             .then(_ => {
               this._recalcPage();
               this._drawPanels(this.currentPanelIndex);
+              this._setPaginationHash();
+              this._positionView();
             });
         });
+    }
+
+    _getPaginationFromHash() {
+      let match = window.location.hash.match(/(\d+)-(\d+)/);
+
+      if (!match)
+        return false;
+
+      const pageIndex = Math.min(
+        Math.max(parseInt(parseInt(match[1]) - 1), 0), this.pages.length - 1);
+
+      const maxPanels = this.pages[pageIndex].panels.length - 1;
+      const panelIndex = Math.min(
+        Math.max(parseInt(parseInt(match[2]) - 1), 0), maxPanels);
+
+      return [pageIndex, panelIndex];
+    }
+
+    _setPaginationHash() {
+      let currentPage = this.currentPageIndex + 1;
+      let currentPanel = this.currentPanelIndex + 1;
+
+      if (currentPage < 10)
+        currentPage = '0' + currentPage;
+
+      if (currentPanel < 10)
+        currentPanel = '0' + currentPanel;
+
+      window.location.hash = currentPage + '-' + currentPanel;
     }
 
     _addEventListeners() {
@@ -235,6 +271,7 @@ class MangaReader extends HTMLElement {
 
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
+      this._setPaginationHash();
       this._positionView();
     }
 
@@ -256,6 +293,7 @@ class MangaReader extends HTMLElement {
 
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
+      this._setPaginationHash();
       this._positionView();
     }
 
@@ -272,6 +310,7 @@ class MangaReader extends HTMLElement {
       this._setPage(this.currentPageIndex).then(_ => {
         this._recalcPage();
         this._drawPanels(this.currentPanelIndex);
+        this._setPaginationHash();
         this._positionView();
       });
     }
@@ -289,6 +328,7 @@ class MangaReader extends HTMLElement {
       this._setPage(this.currentPageIndex).then(_ => {
         this._recalcPage();
         this._drawPanels(this.currentPanelIndex);
+        this._setPaginationHash();
         this._positionView();
       });
     }
