@@ -60,6 +60,7 @@
   },
   {
     "image": "images/one/03.jpg",
+    "fitscreen": true,
     "panels": [
       {
         "x": 0,

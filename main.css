@@ -36,13 +36,16 @@ label {
 
 manga-reader {
   display: block;
-  width: 100vw;
+  width: auto;
   padding: 0 15px;
   margin: 15px 0;
 }
 
 manga-reader canvas {
+  display: block;
+  margin: 0 auto;
   width: 100%;
   height: auto;
   background: #fff;
 }
+
