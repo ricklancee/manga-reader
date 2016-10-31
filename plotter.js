@@ -51,13 +51,11 @@ class Plotter {
       this.log.push(`${percentageX}% ${percentageY}%`);
 
       let panel = this.calculateRectangle(this.log);
-      // panel.path = this.log.join(',');
-      panel.path = '5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%';
+      panel.path = this.log.join(',');
       console.log(panel)
     }
 
     calculateRectangle(panel) {
-      panel = '5.27% 61.69%,99.85% 61.76%,100% 100%,5.52% 100%'.split(',');
 
       var x = panel.map(coards => {
         coards = coards.replace('%', '');
