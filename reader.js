@@ -39,8 +39,6 @@ class MangaReader extends HTMLElement {
         // options
         this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
           || false;
-        this._debug = (this.hasAttribute('debug') && this.getAttribute('debug') !== 'false')
-          || false;
         this._pagination = true;
 
         // Page variables
@@ -72,7 +70,9 @@ class MangaReader extends HTMLElement {
     }
 
     _addEventListeners() {
-      // window.addEventListener('resize', this._recalcPage.bind(this));
+      window.addEventListener('resize', _ => {
+        this._recalcPage();
+      });
 
       window.addEventListener('keydown', event => {
         if (event.keyCode === 39) { // right
@@ -87,6 +87,18 @@ class MangaReader extends HTMLElement {
     }
 
     _recalcPage() {
+      const BCR = this.canvasEl.getBoundingClientRect();
+
+      this.screenHeight = window.innerHeight;
+      this.screenWidth = window.innerWidth;
+
+      this.pageDimensions = {
+        top: BCR.top + window.scrollY,
+        left: BCR.left + window.scrollX,
+        width: BCR.width,
+        height: BCR.height,
+      };
+
       if (this._fitscreen) {
         this.fitscreen();
       } else if (this.pages[this.currentPageIndex].fitscreen) {
@@ -94,14 +106,6 @@ class MangaReader extends HTMLElement {
       } else {
         this.fitscreenOff();
       }
-
-      const BCR = this.canvasEl.getBoundingClientRect();
-      this.pageDimensions = {
-        top: BCR.top + window.scrollY,
-        left: BCR.left + window.scrollX,
-        width: BCR.width,
-        height: BCR.height,
-      };
     }
 
     fitscreen() {

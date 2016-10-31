@@ -45,6 +45,7 @@ manga-reader canvas {
   display: block;
   margin: 0 auto;
   width: 100%;
+  max-width: 980px;
   height: auto;
   background: #fff;
 }
