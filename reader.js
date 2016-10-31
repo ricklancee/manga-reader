@@ -27,6 +27,10 @@
 class Reader {
 
     constructor (data) {
+        if (!data) {
+          return;
+        }
+
         this.viewerEl = document.querySelector('.viewer');
         this.viewBox = document.querySelector('.view-box');
         this.panel = document.querySelector('.viewer .panel');
