@@ -32,7 +32,7 @@ h1 {
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
-  max-width: 900px;
+  // max-width: 900px;
   margin: 0 auto;
 }
 
@@ -42,9 +42,9 @@ h1 {
   top: 0;
   left: 0;
   display: block;
-  width: 100%;
+  width: calc(100% - 20px);
   height: auto;
-  margin: 10px 0;
+  margin: 10px;
   z-index: -1;
 }
 
