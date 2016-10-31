@@ -123,6 +123,14 @@ class MangaReader extends HTMLElement {
     }
 
     _recalcPage() {
+      if (this._fitscreen) {
+        this.fitscreen();
+      } else if (this.pages[this.currentPageIndex].fitscreen) {
+        this.fitscreen();
+      } else {
+        this.fitscreenOff();
+      }
+
       const BCR = this.canvasEl.getBoundingClientRect();
 
       this.screenHeight = window.innerHeight;
@@ -134,14 +142,6 @@ class MangaReader extends HTMLElement {
         width: BCR.width,
         height: BCR.height,
       };
-
-      if (this._fitscreen) {
-        this.fitscreen();
-      } else if (this.pages[this.currentPageIndex].fitscreen) {
-        this.fitscreen();
-      } else {
-        this.fitscreenOff();
-      }
     }
 
     fitscreen() {
@@ -321,7 +321,7 @@ class MangaReader extends HTMLElement {
 
       if (this.currentPanelIndex < 0) {
         this.currentPageIndex = 0;
-        console.log('first page');
+        console.log('First Page');
         return;
       }
 
