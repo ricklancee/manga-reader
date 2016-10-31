@@ -40,7 +40,7 @@ class MangaReader extends HTMLElement {
     this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
       || false;
     this._pagination = true;
-    this._opacity = 0.05;
+    this._opacity = 0.025;
 
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -375,7 +375,9 @@ class MangaReader extends HTMLElement {
 
   _positionView() {
     const currentPanel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
-
+    if (!currentPanel) {
+      return;
+    }
     const offsetY = this.pageDimensions.top - 15;
     const offsetX = this.pageDimensions.left - 15;
     const panelY = (currentPanel.y * this.pageDimensions.height / 100) + offsetY;
