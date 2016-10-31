@@ -25,7 +25,7 @@
       let polyfillsNeeded = [];
 
       const loadScripts = (urls, yeyCallback, neyCallback) => {
-        const count = urls.length;
+        let count = urls.length;
         let errored = false;
 
         if (urls.length == 0) return yeyCallback();
@@ -46,7 +46,7 @@
         });
       };
 
-      if (!('Promise' in self)) {
+      if (!('Promise' in window)) {
         polyfillsNeeded.push('polyfills/promise.js');
       }
 
