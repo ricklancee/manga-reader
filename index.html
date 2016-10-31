@@ -11,7 +11,13 @@
 </head>
 <body>
     <main>
+      <div>
       <h1>MANGA READER</h1>
+      <label>
+        fitscreen
+        <input type="checkbox" name="fitscreen">
+      </label>
+      </div>
       <div class="viewer">
         <div class="view-box">
           <img src="" class="page hidden">
@@ -52,7 +58,7 @@
 
       window.addEventListener('load', _ => {
         loadScripts(polyfillsNeeded, _ => {
-          new Reader([
+          window.reader = new Reader([
             {
               image: 'images/one/01.jpg',
               panels: [
@@ -87,6 +93,10 @@
             }
           ]);
         });
+
+        document.querySelector('input[name="fitscreen"]').addEventListener('change', event => {
+          window.reader.fitScreenToggle();
+        })
       });
 
     </script>

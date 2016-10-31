@@ -101,15 +101,25 @@ class Reader {
       });
     }
 
+    fitScreenToggle() {
+      this.fitScreen = !this.fitScreen;
+      this.viewerEl.classList.toggle('fitscreen');
+      this._recalc();
+    }
+
     _recalc() {
       this._calculatePageDimensions();
+
       if (this.fitScreen) {
         this.viewerEl.style.width = this.pageDimensions.width + 'px';
+      } else {
+        this.viewerEl.style.width = '';
       }
 
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
       this._positionPageIfNeeded();
+
       if (this.debug) {
         this._drawDebugPanels();
       }
