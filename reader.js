@@ -160,12 +160,13 @@ class Reader {
     _drawPanel(index) {
       const panel = this.pages[this.currentPageIndex].panels[index];
 
-      const path = panel.path;
+      let path = `-webkit-clip-path: polygon(${panel.path}); clip-path: polygon(${panel.path});
+        clip-path: polygon(${panel.path}); clip-path: polygon(${panel.path});`;
 
-      this.panel.setAttribute('style',
-        `-webkit-clip-path: polygon(${path}); clip-path: polygon(${path});
-        clip-path: polygon(${path}); clip-path: polygon(${path});`
-      );
+      this.panel.setAttribute('style', path);
+
+      // TODO: Clip fallback to rectangle
+
       this.panel.setAttribute('data-index', index);
     }
 
@@ -308,11 +309,11 @@ class Reader {
 
     _previousPage() {
       this.currentPageIndex--;
-      this.currentPanelIndex = 0;
 
       if (this.currentPageIndex == 0)
         this.currentPageIndex = 0;
 
+      this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
       this._setPageHash();
       this._loadPage(this.currentPageIndex);
     }
@@ -340,7 +341,12 @@ class Reader {
           this.viewerEl.style.width = this.pageDimensions.width + 'px';
         }
 
-        this._drawPanel(0);
+        if (this.currentPanelIndex > 0) {
+          this._drawUpToPanel(this.currentPanelIndex);
+        } else {
+          this._drawPanel(this.currentPanelIndex);
+        }
+
         this._positionPageIfNeeded();
 
         if (this.debug) {
@@ -348,7 +354,7 @@ class Reader {
         }
 
         this.page.classList.remove('hidden');
-        this.panel.classList.remove('hidden');
+        document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('hidden'));
       });
     }
 }
