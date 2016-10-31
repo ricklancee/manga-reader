@@ -12,12 +12,13 @@ class Reader {
         this.fitScreen = false;
 
         this.pageDimensions = null;
+        this.pageOffsetY = 0;
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
 
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
-        this.pageOffsetY = 0;
+        this._setPageHash();
 
         this.pages = data;
 
@@ -109,9 +110,8 @@ class Reader {
       for (var i = 0; i < panels.length; i++) {
         const clone = box.cloneNode();
 
-        console.log(panels[i].x * this.pageDimensions.width / 100);
-
-        clone.style.left = panels[i].x * this.pageDimensions.width / 100 + 'px';
+        // 15 = page margin
+        clone.style.left = (panels[i].x * this.pageDimensions.width / 100) + 15 + 'px';
         clone.style.top = (panels[i].y * this.pageDimensions.height / 100) + this.pageDimensions.top + 'px';
         clone.style.width = panels[i].width * this.pageDimensions.width / 100 + 'px';
         clone.style.height = panels[i].height * this.pageDimensions.height / 100 + 'px';
@@ -144,6 +144,19 @@ class Reader {
       this.viewerEl.scrollTop = this.pageOffsetY;
     }
 
+    _setPageHash() {
+      let currentPage = this.currentPageIndex + 1;
+      let currentPanel = this.currentPanelIndex + 1;
+
+      if (currentPage < 10)
+        currentPage = '0' + currentPage;
+
+      if (currentPanel < 10)
+        currentPanel = '0' + currentPanel;
+
+      window.location.hash = currentPage + '-' + currentPanel;
+    }
+
     _nextPanel() {
       let index = this.currentPanelIndex + 1;
 
@@ -167,6 +180,7 @@ class Reader {
 
 
       this.currentPanelIndex = index;
+      this._setPageHash();
       this._drawPanel(index);
       this._positionPageIfNeeded();
     }
@@ -192,6 +206,7 @@ class Reader {
       }
 
       this.currentPanelIndex = index;
+      this._setPageHash();
       this._drawPanel(index);
       this._positionPageIfNeeded();
     }
@@ -203,6 +218,7 @@ class Reader {
       if (this.currentPageIndex > this.pages.length - 1)
         this.currentPageIndex = this.pages.length - 1;
 
+      this._setPageHash();
       this._loadPage(this.currentPageIndex);
     }
 
@@ -213,6 +229,7 @@ class Reader {
       if (this.currentPageIndex == 0)
         this.currentPageIndex = 0;
 
+      this._setPageHash();
       this._loadPage(this.currentPageIndex);
     }
 
@@ -234,6 +251,11 @@ class Reader {
 
       this._loadImage(this.pages[index].image).then(_ => {
         this._calculatePageDimensions();
+
+        if (this.fitScreen) {
+          this.viewerEl.style.width = this.pageDimensions.width + 'px';
+        }
+
         this._drawPanel(0);
         this._positionPageIfNeeded();
 

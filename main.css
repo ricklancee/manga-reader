@@ -42,9 +42,9 @@ h1 {
   top: 0;
   left: 0;
   display: block;
-  width: calc(100% - 20px);
+  width: calc(100% - 30px);
   height: auto;
-  margin: 10px;
+  margin: 15px;
   z-index: -1;
 }
 
