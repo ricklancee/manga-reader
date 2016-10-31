@@ -24,7 +24,7 @@
 
 'use strict';
 
-class Reader extends HTMLElement {
+class MangaReader extends HTMLElement {
 
     createdCallback() {
         this.data = this.getAttribute('data');
@@ -41,24 +41,43 @@ class Reader extends HTMLElement {
           || false;
         this.debug = (this.hasAttribute('debug') && this.getAttribute('debug') !== 'false')
           || false;
+        this.pagination = true;
 
         // Page variables
         this.currentPageIndex = 0;
         this.currentPanelIndex = 0;
 
+        this.pageDimensions = null;
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight;
+
         // Init
         this._createCanvas();
+
         // TODO: Show spinner?
 
-        // Data is loaded
+        this._addEventListeners();
+
+        // When data is loaded save it
         this._loadData().then(data => {
           this.pages = data;
-          const imageUrl = this.pages[this.currentPageIndex].image;
-          this._loadImage(imageUrl)
-            .then(image => {
-              console.log(image);
+
+          this._setPage(this.currentPageIndex)
+            .then(_ => {
+              this._drawPanels(this.currentPanelIndex);
             });
         });
+    }
+
+    _addEventListeners() {
+      window.addEventListener('keydown', event => {
+        if (event.keyCode === 39) { // right
+          this.nextPanel();
+        }
+        if (event.keyCode === 37) { // left
+          this.previousPanel();
+        }
+      });
     }
 
     _loadData() {
@@ -82,8 +101,9 @@ class Reader extends HTMLElement {
     }
 
     _loadImage(url) {
-      reutn new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const img = new Image();
+
         img.onload = () => {
           resolve(img);
         };
@@ -92,7 +112,141 @@ class Reader extends HTMLElement {
           reject('failed to load image');
         };
 
-        img.src = 'url';
+        img.src = url;
+      });
+    }
+
+    _setPage(index) {
+        const imageUrl = this.pages[index].image;
+
+        // Clear the canvas;
+        this.canvas.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+
+        return new Promise(resolve => {
+
+          this._loadImage(imageUrl)
+            .then(image => {
+              this.currentImage = image;
+              this._drawPage(image);
+              resolve();
+            });
+        });
+    }
+
+    _drawPage(image) {
+      this.canvas.save();
+      this.canvasEl.width = image.width;
+      this.canvasEl.height = image.height;
+      this.canvas.globalAlpha = 0.1;
+      this.canvas.drawImage(image, 0, 0);
+      this.pageDimensions = this.canvasEl.getBoundingClientRect();
+      this.canvas.globalAlpha = 1;
+      this.canvas.restore();
+    }
+
+    _drawPanels(to) {
+      const max = this.pages[this.currentPageIndex].panels.length;
+      const len = Math.min(Math.max(parseInt(to + 1), 0), max);
+
+      for (var i = 0; i < len; i++) {
+        this._drawPanel(i);
+      }
+    }
+
+    _drawPanel(index) {
+      const path = this.pages[this.currentPageIndex].panels[index].path.split(',');
+      const len = path.length;
+
+      this.canvas.save();
+      this.canvas.beginPath();
+      for (var i = 0; i < len; i++) {
+        const coards = path[i].split(' ');
+
+        const x = coards[0] * this.canvasEl.width / 100;
+        const y = coards[1] * this.canvasEl.height / 100;
+
+        if (len == 0) {
+          this.canvas.moveTo(x, y);
+        } else {
+          this.canvas.lineTo(x, y);
+        }
+      }
+      this.canvas.closePath();
+      this.canvas.clip();
+
+      this.canvas.drawImage(this.currentImage, 0, 0);
+
+      this.canvas.restore();
+    }
+
+    nextPanel() {
+      const max = this.pages[this.currentPageIndex].panels.length - 1;
+
+      this.currentPanelIndex++;
+      if (this.currentPanelIndex > max) {
+
+        if (this.currentPageIndex < this.pages.length - 1) {
+          this.nextPage();
+          console.log('Go to next page');
+          return;
+        }
+
+        console.log('Last panel');
+        this.currentPanelIndex = max;
+        return;
+      }
+
+      this._drawPage(this.currentImage);
+      this._drawPanels(this.currentPanelIndex);
+    }
+
+    previousPanel() {
+      this.currentPanelIndex--;
+
+      if (this.currentPanelIndex < 0) {
+
+        if (this.currentPageIndex > 0) {
+          this.previousPage();
+          console.log('go to previous page');
+          return;
+        }
+
+        console.log('First panel');
+        this.currentPanelIndex = 0;
+        return;
+      }
+
+      this._drawPage(this.currentImage);
+      this._drawPanels(this.currentPanelIndex);
+    }
+
+    nextPage() {
+      this.currentPageIndex++;
+      this.currentPanelIndex = 0;
+
+      if (this.currentPanelIndex > this.pages.length - 1) {
+        this.currentPageIndex = this.pages.length - 1;
+        console.log('last page');
+        return;
+      }
+
+      this._setPage(this.currentPageIndex).then(_ => {
+        this._drawPanels(this.currentPanelIndex);
+      });
+    }
+
+    previousPage() {
+      this.currentPageIndex--;
+      this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
+
+      if (this.currentPanelIndex < 0) {
+        this.currentPageIndex = 0;
+        console.log('first page');
+        return;
+      }
+
+      this._setPage(this.currentPageIndex).then(_ => {
+        this._drawPanels(this.currentPanelIndex);
       });
     }
 }

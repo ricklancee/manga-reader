@@ -19,8 +19,6 @@ h1 {
 }
 
 label {
-  position: absolute;
-  bottom: 15px;
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -39,5 +37,12 @@ label {
 manga-reader {
   display: block;
   width: 100vw;
-  height: 100vh;
+  padding: 0 15px;
+  margin: 15px 0;
+}
+
+manga-reader canvas {
+  width: 100%;
+  height: auto;
+  background: #fff;
 }

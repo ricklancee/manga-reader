@@ -37,6 +37,6 @@ window.addEventListener('load', _ => {
 
   // Initialize
   loadScripts(polyfillsNeeded, _ => {
-    document.registerElement('manga-reader', Reader);
+    document.registerElement('manga-reader', MangaReader);
   });
 });
