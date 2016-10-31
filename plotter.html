@@ -12,15 +12,20 @@
         box-sizing: border-box;
       }
       body, html {
+        position: relative;
         margin: 0;
         padding: 0;
+      }
+      main {
+        z-index: 2;
       }
       .plotbox {
         position: relative;
         display: block;
-        width: calc(100vw - 40px);
+        width: calc(300vw);
         height: auto;
         margin: 20px auto;
+        background-color: #fff;
       }
       .plotbox svg {
         position: absolute;
@@ -32,17 +37,28 @@
       .plotter {
         display: block;
         width: 100%;
+        opacity: 0.1;
         height: auto;
+      }
+      button {
+        top: 0;
+        left: 0;
+        width: 0px;
+        height: 0px;
+        position: relative;
+        z-index: -1;
       }
     </style>
 </head>
 <body>
     <main>
+      <button data-clipboard-text="">copy</button>
       <div class="plotbox">
         <svg><path d="" fill="transparent" stroke="#ff3030" stroke-width="2px"></svg>
         <img src="images/one/04.jpg" class="plotter">
       </div>
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
     <script src="plotter.js"></script>
 </body>
 </html>

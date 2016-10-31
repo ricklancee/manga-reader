@@ -5,6 +5,7 @@ class Plotter {
     constructor () {
         this.path = document.querySelector('svg path');
         this.page = document.querySelector('.plotter');
+        this.button = document.querySelector('button');
 
         const recalc = () => {
           const BCR = this.page.getBoundingClientRect();
@@ -18,15 +19,21 @@ class Plotter {
 
         recalc();
 
+        new Clipboard('button');
         document.addEventListener('click', this._onPageClick.bind(this));
         document.addEventListener('keydown', event => {
           if (event.keyCode == 13) {
+            this.button.setAttribute('data-clipboard-text', this.data);
+            event.stopPropagation();
+            this.button.click();
             console.log(this.data);
+
             this.log= [];
             this.line ='';
             this.path.setAttribute('d', '');
           }
         });
+
         window.addEventListener('resize', () => {
           recalc();
         });
@@ -39,6 +46,9 @@ class Plotter {
 
       let x = event.pageX - this.pageDimensions.left;
       let y = event.pageY - this.pageDimensions.top;
+
+      this.button.style.top = y + 'px';
+      this.button.style.left = x + 'px';
 
       if (x < 0) {
         x = 0;
