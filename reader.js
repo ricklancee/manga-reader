@@ -106,7 +106,7 @@ class MangaReader extends HTMLElement {
     if (currentPanel < 10)
       currentPanel = '0' + currentPanel;
 
-    window.location.hash = currentPage + '-' + currentPanel;
+    window.history.pushState({}, null, '#' + currentPage + '-' + currentPanel);
   }
 
   _setActivePagination() {
@@ -131,10 +131,8 @@ class MangaReader extends HTMLElement {
       }
     });
 
-    this.addEventListener('click', event => {
-      if (event.target.classList.contains('pagination-link')) {
-        window.location.reload();
-      }
+    window.addEventListener('hashchange', event => {
+      window.location.reload();
     });
   }
 
