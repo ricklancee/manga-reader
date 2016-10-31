@@ -52,7 +52,8 @@ class Plotter {
 
       let panel = this.calculateRectangle(this.log);
       panel.path = this.log.join(',');
-      console.log(panel)
+
+      console.log(JSON.stringify(panel));
     }
 
     calculateRectangle(panel) {
