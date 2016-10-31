@@ -16,13 +16,24 @@ main {
   display: flex;
 }
 
-h1 {
-  font-weight: 300;
-  font-size: 14px;
+.sidepanel {
+  position: relative;
   margin-left:10px;
   margin-right:10px;
   margin-top:10px;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 14px;
   text-align: center;
+}
+
+label {
+  position: absolute;
+  bottom: 15px;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 .viewer {
