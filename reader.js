@@ -50,6 +50,7 @@ class MangaReader extends HTMLElement {
         this.pageDimensions = null;
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
+        this.pageOffsetY = 0;
 
         // Init
         this._createCanvas();
@@ -70,6 +71,8 @@ class MangaReader extends HTMLElement {
     }
 
     _addEventListeners() {
+      // window.addEventListener('resize', this._recalcPage.bind(this));
+
       window.addEventListener('keydown', event => {
         if (event.keyCode === 39) { // right
           this.nextPanel();
@@ -78,6 +81,16 @@ class MangaReader extends HTMLElement {
           this.previousPanel();
         }
       });
+    }
+
+    _recalcPage() {
+      const BCR = this.canvasEl.getBoundingClientRect();
+      this.pageDimensions = {
+        top: BCR.top + window.scrollY,
+        left: BCR.left + window.scrollX,
+        width: BCR.width,
+        height: BCR.height,
+      };
     }
 
     _loadData() {
@@ -139,7 +152,7 @@ class MangaReader extends HTMLElement {
       this.canvasEl.height = image.height;
       this.canvas.globalAlpha = 0.1;
       this.canvas.drawImage(image, 0, 0);
-      this.pageDimensions = this.canvasEl.getBoundingClientRect();
+      this._recalcPage();
       this.canvas.globalAlpha = 1;
       this.canvas.restore();
     }
@@ -198,6 +211,7 @@ class MangaReader extends HTMLElement {
 
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
+      this._positionView();
     }
 
     previousPanel() {
@@ -218,6 +232,7 @@ class MangaReader extends HTMLElement {
 
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
+      this._positionView();
     }
 
     nextPage() {
@@ -232,6 +247,7 @@ class MangaReader extends HTMLElement {
 
       this._setPage(this.currentPageIndex).then(_ => {
         this._drawPanels(this.currentPanelIndex);
+        this._positionView();
       });
     }
 
@@ -247,6 +263,16 @@ class MangaReader extends HTMLElement {
 
       this._setPage(this.currentPageIndex).then(_ => {
         this._drawPanels(this.currentPanelIndex);
+        this._positionView();
       });
+    }
+
+    _positionView() {
+      const currentPanel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
+
+      const offsetY = this.pageDimensions.top - 15;
+      const panelY = (currentPanel.y * this.pageDimensions.height / 100) + offsetY;
+
+      window.scrollTo(0, panelY);
     }
 }
