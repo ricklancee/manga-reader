@@ -16,11 +16,12 @@ class Reader {
         this.screenWidth = window.innerWidth;
         this.screenHeight = window.innerHeight;
 
-        this.currentPageIndex = 0;
-        this.currentPanelIndex = 0;
-        this._setPageHash();
-
         this.pages = data;
+
+        this._setInitialIndexes();
+
+        if (!window.location.hash)
+          this._setPageHash();
 
         this._addEventListeners();
 
@@ -35,7 +36,15 @@ class Reader {
             this.viewerEl.style.width = this.pageDimensions.width + 'px';
           }
 
-          this._drawPanel(this.currentPanelIndex);
+          // If the panel index is higher than 0 it means
+          // we loaded into the page on a specific panel.
+          // therefor draw all panels up and to the current index.
+          if (this.currentPanelIndex > 0) {
+            this._drawUpToPanel(this.currentPanelIndex);
+          } else {
+            this._drawPanel(this.currentPanelIndex);
+          }
+
           this._positionPageIfNeeded();
 
           if (this.debug) {
@@ -44,8 +53,29 @@ class Reader {
 
           // Display the panels after initial setup is complete
           this.page.classList.remove('hidden');
-          this.panel.classList.remove('hidden');
+          document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('hidden'));
         });
+    }
+
+    _setInitialIndexes() {
+      if (window.location.hash) {
+        let match = window.location.hash.match(/(\d+)-(\d+)/);
+
+        if (!match)
+          return;
+
+        this.currentPageIndex = Math.min(
+          Math.max(parseInt(parseInt(match[1]) - 1), 0), this.pages.length - 1);
+
+        const maxPanels = this.pages[this.currentPageIndex].panels.length - 1;
+        this.currentPanelIndex = Math.min(
+          Math.max(parseInt(parseInt(match[2]) - 1), 0), maxPanels);
+
+        return;
+      }
+
+      this.currentPageIndex = 0;
+      this.currentPanelIndex = 0;
     }
 
     _loadImage(url) {
@@ -98,6 +128,7 @@ class Reader {
         `-webkit-clip-path: polygon(${path}); clip-path: polygon(${path});
         clip-path: polygon(${path}); clip-path: polygon(${path});`
       );
+      this.panel.setAttribute('data-index', index);
     }
 
     _drawDebugPanels() {
@@ -155,6 +186,21 @@ class Reader {
         currentPanel = '0' + currentPanel;
 
       window.location.hash = currentPage + '-' + currentPanel;
+    }
+
+    _drawUpToPanel(index) {
+      const max = this.pages[this.currentPageIndex].panels.length;
+      const drawUpTo =
+        Math.min(Math.max(parseInt(index + 1), 0), max);
+
+      for (var i = 0; i < drawUpTo; i++) {
+        this._drawPanel(i);
+
+        if (i !== max) {
+          const clone = this.panel.cloneNode();
+          this.viewBox.appendChild(clone);
+        }
+      }
     }
 
     _nextPanel() {
