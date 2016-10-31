@@ -11,70 +11,9 @@
 </head>
 <body>
     <main>
-      <div class="sidepanel">
-        <h1>MANGA READER</h1>
-        <label>
-          fitscreen
-          <input type="checkbox" name="fitscreen">
-        </label>
-      </div>
-
-      <div class="viewer">
-        <div class="view-box">
-          <img src="" class="page hidden">
-          <img src="" class="panel hidden">
-        </div>
-      </div>
+      <manga-reader debug data="images/one/data.json"></manga-reader>
     </main>
-
     <script src="reader.js"></script>
-    <script>
-      window.addEventListener('load', _ => {
-        let polyfillsNeeded = [];
-
-        const loadScripts = (urls, yeyCallback, neyCallback) => {
-          let count = urls.length;
-          let errored = false;
-
-          if (urls.length == 0) return yeyCallback();
-
-          urls.forEach(function(url) {
-            var script = document.createElement('script');
-            script.onload = function() {
-              if (errored) return;
-              if (!--count) yeyCallback();
-            };
-            script.onerror = function() {
-              if (errored) return;
-              neyCallback();
-              errored = true;
-            };
-            script.src = url;
-            document.head.insertBefore(script, document.head.firstChild);
-          });
-        };
-
-        if (!('Promise' in window)) {
-          polyfillsNeeded.push('polyfills/promise.js');
-        }
-
-        // Initialize
-        loadScripts(polyfillsNeeded, _ => {
-          fetch('images/one/data.json')
-            .then(result => {
-              return result.json();
-            })
-            .then(data => {
-              window.reader = new Reader(data);
-            });
-        });
-
-        document.querySelector('input[name="fitscreen"]').addEventListener('change', event => {
-          window.reader.fitScreenToggle();
-        });
-
-      });
-
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>

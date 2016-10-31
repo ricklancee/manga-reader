@@ -24,337 +24,75 @@
 
 'use strict';
 
-class Reader {
+class Reader extends HTMLElement {
 
-    constructor (data) {
-        if (!data) {
+    createdCallback() {
+        this.data = this.getAttribute('data');
+        this.pages = null;
+        this.canvasEl = null;
+        this.canvas = null;
+
+        if (!this.data) {
           return;
         }
 
-        this.viewerEl = document.querySelector('.viewer');
-        this.viewBox = document.querySelector('.view-box');
-        this.panel = document.querySelector('.viewer .panel');
-        this.page = document.querySelector('.viewer .page');
+        // options
+        this.fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
+          || false;
+        this.debug = (this.hasAttribute('debug') && this.getAttribute('debug') !== 'false')
+          || false;
 
-        this.debug = false;
-        this.fitScreen = false;
+        // Page variables
+        this.currentPageIndex = 0;
+        this.currentPanelIndex = 0;
 
-        this.pageDimensions = null;
-        this.pageOffsetY = 0;
-        this.screenWidth = window.innerWidth;
-        this.screenHeight = window.innerHeight;
+        // Init
+        this._createCanvas();
+        // TODO: Show spinner?
 
-        this.pages = data;
-
-        this._setInitialIndexes();
-
-        if (!window.location.hash)
-          this._setPageHash();
-
-        this._addEventListeners();
-
-        this._loadImage(this.pages[this.currentPageIndex].image).then(_ => {
-          if (this.fitScreen) {
-            this.viewerEl.classList.add('fitscreen');
-          }
-
-          this._calculatePageDimensions();
-
-          if (this.fitScreen) {
-            this.viewerEl.style.width = this.pageDimensions.width + 'px';
-          }
-
-          // If the panel index is higher than 0 it means
-          // we loaded into the page on a specific panel.
-          // therefor draw all panels up and to the current index.
-          if (this.currentPanelIndex > 0) {
-            this._drawUpToPanel(this.currentPanelIndex);
-          } else {
-            this._drawPanel(this.currentPanelIndex);
-          }
-
-          this._positionPageIfNeeded();
-
-          if (this.debug) {
-            this._drawDebugPanels();
-          }
-
-          // Display the panels after initial setup is complete
-          this.page.classList.remove('hidden');
-          document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('hidden'));
+        // Data is loaded
+        this._loadData().then(data => {
+          this.pages = data;
+          const imageUrl = this.pages[this.currentPageIndex].image;
+          this._loadImage(imageUrl)
+            .then(image => {
+              console.log(image);
+            });
         });
     }
 
-    _setInitialIndexes() {
-      if (window.location.hash) {
-        let match = window.location.hash.match(/(\d+)-(\d+)/);
+    _loadData() {
+      return new Promise((resolve, reject) => {
+        fetch(this.data)
+          .then(response => { return response.json() })
+          .then(resolve)
+          .catch(reject)
+      });
+    }
 
-        if (!match)
-          return;
-
-        this.currentPageIndex = Math.min(
-          Math.max(parseInt(parseInt(match[1]) - 1), 0), this.pages.length - 1);
-
-        const maxPanels = this.pages[this.currentPageIndex].panels.length - 1;
-        this.currentPanelIndex = Math.min(
-          Math.max(parseInt(parseInt(match[2]) - 1), 0), maxPanels);
-
+    _createCanvas() {
+      if (this.canvasEl) {
         return;
       }
 
-      this.currentPageIndex = 0;
-      this.currentPanelIndex = 0;
+      const canvas = document.createElement('canvas');
+      this.canvasEl = canvas;
+      this.canvas = canvas.getContext('2d');
+      this.appendChild(canvas);
     }
 
     _loadImage(url) {
-      return new Promise((resolve, reject) => {
-        this.panel.src = url;
-        this.page.src = url;
+      reutn new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve(img);
+        };
 
-        this.panel.onload = function() {
-          resolve();
-        }
-      });
-    }
+        img.onerror = _ => {
+          reject('failed to load image');
+        };
 
-    _addEventListeners() {
-      window.addEventListener('resize', this._recalc.bind(this));
-      window.addEventListener('keydown', event => {
-        if (event.keyCode === 39) { // right
-          this._nextPanel();
-        }
-        if (event.keyCode === 37) { // left
-          this._previousPanel();
-        }
-      });
-    }
-
-    fitScreenToggle() {
-      this.fitScreen = !this.fitScreen;
-      this.viewerEl.classList.toggle('fitscreen');
-      this._recalc();
-    }
-
-    _recalc() {
-      this._calculatePageDimensions();
-
-      if (this.fitScreen) {
-        this.viewerEl.style.width = this.pageDimensions.width + 'px';
-      } else {
-        this.viewerEl.style.width = '';
-      }
-
-      this.screenWidth = window.innerWidth;
-      this.screenHeight = window.innerHeight;
-      this._positionPageIfNeeded();
-
-      if (this.debug) {
-        this._drawDebugPanels();
-      }
-    }
-
-    _calculatePageDimensions() {
-      this.pageDimensions = this.page.getBoundingClientRect();
-    }
-
-    _drawPanel(index) {
-      const panel = this.pages[this.currentPageIndex].panels[index];
-
-      let path = `-webkit-clip-path: polygon(${panel.path}); clip-path: polygon(${panel.path});
-        clip-path: polygon(${panel.path}); clip-path: polygon(${panel.path});`;
-
-      this.panel.setAttribute('style', path);
-
-      // TODO: Clip fallback to rectangle
-
-      this.panel.setAttribute('data-index', index);
-    }
-
-    _drawDebugPanels() {
-      document.querySelectorAll('.debug-box').forEach(node => node.remove());
-
-      const box = document.createElement('div');
-      box.classList.add('debug-box');
-
-      const panels = this.pages[this.currentPageIndex].panels;
-      for (var i = 0; i < panels.length; i++) {
-        const clone = box.cloneNode();
-
-        // 15 = page margin
-        clone.style.left = (panels[i].x * this.pageDimensions.width / 100) + 15 + 'px';
-        clone.style.top = (panels[i].y * this.pageDimensions.height / 100) + this.pageDimensions.top + 'px';
-        clone.style.width = panels[i].width * this.pageDimensions.width / 100 + 'px';
-        clone.style.height = panels[i].height * this.pageDimensions.height / 100 + 'px';
-
-        this.viewerEl.appendChild(clone);
-      }
-    }
-
-    _positionPageIfNeeded() {
-      const panel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
-
-      // Figure out the Panel position on the page in pixels.
-      const panelY = panel.y * this.pageDimensions.height / 100;
-      const panelX = panel.x * this.pageDimensions.width / 100;
-      const panelWidth = panel.width * this.pageDimensions.width / 100;
-      const panelHeight = panel.height * this.pageDimensions.height / 100;
-
-      // Check if panel is off screen.
-      if ((panelHeight + panelY) - this.pageOffsetY > this.screenHeight - this.pageDimensions.top) {
-        // calculate where to scoll
-        console.log('offscreen');
-        this.pageOffsetY = panelY;
-      }
-
-      if (panelY < this.pageOffsetY) {
-        // reset scroll to panel
-        this.pageOffsetY = panelY;
-      }
-
-      this.viewerEl.scrollTop = this.pageOffsetY;
-    }
-
-    _setPageHash() {
-      let currentPage = this.currentPageIndex + 1;
-      let currentPanel = this.currentPanelIndex + 1;
-
-      if (currentPage < 10)
-        currentPage = '0' + currentPage;
-
-      if (currentPanel < 10)
-        currentPanel = '0' + currentPanel;
-
-      window.location.hash = currentPage + '-' + currentPanel;
-    }
-
-    _drawUpToPanel(index) {
-      const max = this.pages[this.currentPageIndex].panels.length;
-      const drawUpTo =
-        Math.min(Math.max(parseInt(index + 1), 0), max);
-
-      for (var i = 0; i < drawUpTo; i++) {
-        this._drawPanel(i);
-
-        if (i !== drawUpTo-1) {
-          const clone = this.panel.cloneNode();
-          this.viewBox.appendChild(clone);
-        }
-      }
-    }
-
-    _nextPanel() {
-      let index = this.currentPanelIndex + 1;
-
-      if (index !== this.pages[this.currentPageIndex].panels.length) {
-        const clone = this.panel.cloneNode();
-        this.viewBox.appendChild(clone);
-      }
-
-      if (index > this.pages[this.currentPageIndex].panels.length - 1) {
-        // last slide
-
-        if (this.currentPageIndex < this.pages.length - 1) {
-          console.log('goToNextPage');
-          this._nextPage();
-          return;
-        }
-
-        console.log('last slide');
-        index = this.pages[this.currentPageIndex].panels.length - 1;
-      }
-
-
-      this.currentPanelIndex = index;
-      this._setPageHash();
-      this._drawPanel(index);
-      this._positionPageIfNeeded();
-    }
-
-    _previousPanel() {
-      let index = this.currentPanelIndex - 1;
-
-      if (index >= 0) {
-        this.viewBox.lastChild.remove();
-      }
-
-      if (index < 0) {
-
-        if (this.currentPageIndex > 0) {
-          console.log('go to previous page');
-          this._previousPage();
-          return;
-
-        }
-
-        console.log('first slide');
-        index = 0;
-      }
-
-      this.currentPanelIndex = index;
-      this._setPageHash();
-      this._drawPanel(index);
-      this._positionPageIfNeeded();
-    }
-
-    _nextPage() {
-      this.currentPageIndex++;
-      this.currentPanelIndex = 0;
-
-      if (this.currentPageIndex > this.pages.length - 1)
-        this.currentPageIndex = this.pages.length - 1;
-
-      this._setPageHash();
-      this._loadPage(this.currentPageIndex);
-    }
-
-    _previousPage() {
-      this.currentPageIndex--;
-
-      if (this.currentPageIndex == 0)
-        this.currentPageIndex = 0;
-
-      this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
-      this._setPageHash();
-      this._loadPage(this.currentPageIndex);
-    }
-
-    _loadPage(index) {
-      this.viewerEl.scrollTop = 0;
-
-      this.page.classList.add('hidden');
-      this.panel.classList.add('hidden');
-
-      this.viewBox.innerHTML = '';
-
-      this.panel.removeAttribute('style');
-      this.page.removeAttribute('style');
-
-      this.page.src = '';
-      this.panel.src = '';
-      this.viewBox.appendChild(this.page);
-      this.viewBox.appendChild(this.panel);
-
-      this._loadImage(this.pages[index].image).then(_ => {
-        this._calculatePageDimensions();
-
-        if (this.fitScreen) {
-          this.viewerEl.style.width = this.pageDimensions.width + 'px';
-        }
-
-        if (this.currentPanelIndex > 0) {
-          this._drawUpToPanel(this.currentPanelIndex);
-        } else {
-          this._drawPanel(this.currentPanelIndex);
-        }
-
-        this._positionPageIfNeeded();
-
-        if (this.debug) {
-          this._drawDebugPanels();
-        }
-
-        this.page.classList.remove('hidden');
-        document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('hidden'));
+        img.src = 'url';
       });
     }
 }

@@ -12,18 +12,6 @@ body {
   font-family: 'Lucida Grande', Arial, sans-serif;
 }
 
-main {
-  display: flex;
-}
-
-.sidepanel {
-  position: relative;
-  margin-left:10px;
-  margin-right:10px;
-  margin-top:10px;
-  width: 95px;
-}
-
 h1 {
   font-weight: 300;
   font-size: 14px;
@@ -37,94 +25,6 @@ label {
   text-transform: uppercase;
 }
 
-.viewer {
-  flex 1;
-  position: relative;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden;
-  // max-width: 900px;
-  margin: 0 auto;
-}
-
-.viewer .panel,
-.viewer .page {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: calc(100% - 30px);
-  height: auto;
-  margin: 15px;
-  z-index: -1;
-}
-
-.plotbox {
-  position: relative;
-  display: block;
-  width: 200vw;
-  height: auto;
-  padding: 40px;
-}
-
-.plotbox svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 40px;
-  width: 100%;
-  height: 100%;
-}
-
-.point {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-
-  width: 5px;
-  height: 5px;
-
-  background-color: red;
-
-  border-radius: 50%;
-
-}
-
-.plotter {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.viewer.fitscreen{
-  width: auto;
-  max-width: 100%;
-}
-.viewer.fitscreen img {
-  width: auto;
-  height: calc(100% - 20px);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.viewer .view-box {
-  height: 100%;
-  width: 100%;
-  transform: translate(0px, 0px) translateZ(0);
-}
-
-.viewer .hidden {
-  visibility: hidden;
-}
-
-.viewer .page {
-  opacity: 0.05;
-}
-.viewer .page.visible {
-  opacity: 1;
-}
-
 .debug-box {
   position: absolute;
   top: 0;
@@ -134,4 +34,10 @@ label {
   background-color: rgba(255, 64, 64, 0.17);
   border: 1px solid #ff4040;
   z-index: 10;
+}
+
+manga-reader {
+  display: block;
+  width: 100vw;
+  height: 100vh;
 }
