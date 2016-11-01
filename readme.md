@@ -19,3 +19,13 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 2. install dependencies `npm install`
 3. Build es5 files `./node_modules/.bin/babel --presets=es2015 ./*.js --out-dir es5`
 4. Minifiy files (if needed) `./node_modules/.bin/uglifyjs es5/polyfills.js es5/reader.js es5/main.js --compress --mangle --output es5/reader.min.js`
+
+### Todo
+- Loading Spinner when pages and files are beign loaded
+- Add Edge browser support
+- Add click navigation
+- Improve general navigation (i.e. when panels are bigger than the screen height)
+- Add panel effects -> ?
+- Refactor
+- Refactor
+- Refactor
