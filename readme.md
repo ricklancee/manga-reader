@@ -49,7 +49,7 @@ Pages are loaded with a supplied json file. The json file looks as follows:
 ```
 *All values are in percentages relative to the page* 
 
-Each panel had a set of coardinates `x` and `y` and dimensions `width` and `height`. These are the panel boundries. This tells the reader where the panel is on the page.
+Each panel had a set of coardinates (`x` and `y`) and dimensions (`width` and `height`). These are the panel boundries. This tells the reader where the panel is on the page.
 
 The `path` property is the clipping path of the panel.
 
