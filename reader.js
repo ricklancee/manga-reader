@@ -137,6 +137,9 @@ class MangaReader extends HTMLElement {
   }
 
   _recalcPage() {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+
     if (this._fitscreen) {
       this.fitscreen();
     } else if (this.pages[this.currentPageIndex].fitscreen) {
@@ -146,10 +149,6 @@ class MangaReader extends HTMLElement {
     }
 
     const BCR = this.canvasEl.getBoundingClientRect();
-
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-
     this.pageDimensions = {
       top: BCR.top + window.scrollY,
       left: BCR.left + window.scrollX,
