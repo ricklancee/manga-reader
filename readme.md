@@ -11,7 +11,7 @@ Navigate using the arrow keys or use the pagination.
 The reader is added to the html page.
 
 ```html
-<manga-reader data="images/one/data.json"></manga-reader>
+<manga-reader data="manga/one/data.json"></manga-reader>
 ```
 
 Pages are loaded with a supplied json file. The json file looks as follows:
@@ -19,7 +19,7 @@ Pages are loaded with a supplied json file. The json file looks as follows:
 ```json
 [
   {
-    "image": "images/one/01.jpg",
+    "image": "manga/one/01.jpg",
     "panels": [
       {
         "x": 79.15,

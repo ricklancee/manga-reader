@@ -1,4 +1,4 @@
 .DS_STORE
-/images/**
-!/images/one
+/manga/**
+!/manga/one
 node_modules/
