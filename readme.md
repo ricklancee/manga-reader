@@ -2,7 +2,7 @@
 
 *Currently a W.I.P.*
 
-![Manga reader preview](https://thumbs.gfycat.com/FrailArtisticAplomadofalcon-size_restricted.gif)
+![Manga reader preview](https://thumbs.gfycat.com/ConsiderateIncompatibleGilamonster-size_restricted.gif)
 
 Navigate using the arrow keys or use the pagination.
 
