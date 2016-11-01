@@ -38,13 +38,13 @@ Pages are loaded with a supplied json file. The json file looks as follows:
 ]
 
 ```
+*all values are in percentages relative to the page* 
 
-Each panel had a set of coardinated `x` and `y` and dimensions `width` and `height`. This tells the reader where the panels are on the page (all values are in percentages relative to the page).
+Each panel had a set of coardinated `x` and `y` and dimensions `width` and `height`. These are the panel boundries. This tells the reader where the panel is on the page.
 
 The `path` property is the clipping path of the panel.
 
 ![How clipping works](https://github.com/ricklancee/manga-reader/blob/master/clip-preview.jpg?raw=true)  
-*How clipping works*
 
 ### Browser support
 - Chrome  
