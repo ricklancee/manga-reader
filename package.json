@@ -1,0 +1,23 @@
+{
+  "name": "manga-reader",
+  "version": "1.0.0",
+  "description": "*Currently a W.I.P.*",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricklancee/manga-reader.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ricklancee/manga-reader/issues"
+  },
+  "homepage": "https://github.com/ricklancee/manga-reader#readme",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0"
+  }
+}
