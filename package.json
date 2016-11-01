@@ -1,17 +1,13 @@
 {
   "name": "manga-reader",
-  "version": "1.0.0",
-  "description": "*Currently a W.I.P.*",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "1.0",
+  "description": "An lightweight, fast, interactive manga reader",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ricklancee/manga-reader.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Rick Lancee",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ricklancee/manga-reader/issues"
   },
