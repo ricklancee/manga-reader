@@ -2,7 +2,7 @@
 
 *Currently a W.I.P.*
 
-![Manga reader preview](https://thumbs.gfycat.com/ConsiderateIncompatibleGilamonster-size_restricted.gif)
+![Manga reader preview](https://github.com/ricklancee/manga-reader/blob/master/reader-preview.gif?raw=true)
 
 Navigate using the arrow keys or use the pagination.
 
