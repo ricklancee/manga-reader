@@ -43,7 +43,7 @@ Each panel had a set of coardinated `x` and `y` and dimensions `width` and `heig
 
 The `path` property is the clipping path of the panel.
 
-![How clipping works](https://github.com/ricklancee/manga-reader/blob/master/clip-preview.jpg?raw=true)
+![How clipping works](https://github.com/ricklancee/manga-reader/blob/master/clip-preview.jpg?raw=true)  
 *How clipping works*
 
 ### Browser support
