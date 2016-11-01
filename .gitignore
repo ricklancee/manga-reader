@@ -1,2 +1,3 @@
 .DS_STORE
-/images/manga
+/images/**
+!/images/one
