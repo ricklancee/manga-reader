@@ -29,7 +29,7 @@ if (!('Promise' in window)) {
   polyfillsNeeded.push('polyfills/promise.js');
 }
 
-if (!window.fetch) {
+if (!('fetch' in window)) {
   polyfillsNeeded.push('polyfills/fetch/fetch.js');
 }
 
