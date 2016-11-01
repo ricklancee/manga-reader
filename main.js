@@ -1,5 +1,6 @@
 window.addEventListener('load', _ => {
   let polyfillsNeeded = [];
+  let waitForWebcomponents = false;
 
   const loadScripts = (urls, yeyCallback, neyCallback) => {
     let count = urls.length;
@@ -32,11 +33,21 @@ window.addEventListener('load', _ => {
   }
 
   if (!('registerElement' in document)) {
-    polyfillsNeeded.push('polyfills/webcomponentjs/CustomElements.min.js');
+    polyfillsNeeded.push('polyfills/webcomponentsjs/CustomElements.min.js');
+    waitForWebcomponents = true;
   }
 
   // Initialize
   loadScripts(polyfillsNeeded, _ => {
+    if (waitForWebcomponents) {
+      window.addEventListener('WebComponentsReady', function() {
+        document.registerElement('manga-reader', MangaReader);
+      });
+      return;
+    }
+
     document.registerElement('manga-reader', MangaReader);
+  }, _ => {
+    throw new Error('Failed to load polyfills');
   });
 });

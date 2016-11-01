@@ -110,8 +110,8 @@ class MangaReader extends HTMLElement {
   }
 
   _setActivePagination() {
-    this.querySelectorAll('.pagination a').forEach(link => link.classList.remove('active'));
-    this.querySelectorAll('.pagination a[data-index="'+this.currentPageIndex+'"]')
+    Array.from(this.querySelectorAll('.pagination a')).forEach(link => link.classList.remove('active'));
+    Array.from(this.querySelectorAll('.pagination a[data-index="'+this.currentPageIndex+'"]'))
     .forEach(link => link.classList.add('active'));
   }
 
