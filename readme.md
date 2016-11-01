@@ -5,6 +5,13 @@
 Navigate using the arrow keys or use the pagination.
 
 ### How it works
+
+The reader is added to the html page.
+
+```html
+<manga-reader data="images/one/data.json"></manga-reader>
+```
+
 Pages are loaded with a supplied json file. The json file looks as follows:
 
 ```json
