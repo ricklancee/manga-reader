@@ -59,7 +59,8 @@ class MangaReader extends HTMLElement {
 
     // When data is loaded save it
     this._loadData().then(data => {
-      this.pages = data;
+      this.data = data;
+      this.pages = this.data.pages;
 
       this._createPagination();
 
