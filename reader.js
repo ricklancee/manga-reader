@@ -176,6 +176,22 @@ class MangaReader extends HTMLElement {
     });
   }
 
+  _loadImage(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = () => {
+        resolve(img);
+      };
+
+      img.onerror = _ => {
+        reject('failed to load image');
+      };
+
+      img.src = url;
+    });
+  }
+
   _createCanvas() {
     if (this.canvasEl) {
       return;
@@ -209,22 +225,6 @@ class MangaReader extends HTMLElement {
     this.insertBefore(list, this.firstChild);
 
     this.lastChild.parentNode.insertBefore(list.cloneNode(true), this.lastChild.nextSibling);
-  }
-
-  _loadImage(url) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-
-      img.onload = () => {
-        resolve(img);
-      };
-
-      img.onerror = _ => {
-        reject('failed to load image');
-      };
-
-      img.src = url;
-    });
   }
 
   _setPage(index) {
