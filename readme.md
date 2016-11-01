@@ -2,8 +2,49 @@
 
 *Currently a W.I.P.*
 
-Navigate using the arrow keys or use the pagination
+Navigate using the arrow keys or use the pagination.
 
+### How it works
+Pages are loaded with a supplied json file. The json file looks as follows:
+
+```json
+[
+  {
+    "image": "images/one/01.jpg",
+    "panels": [
+      {
+        "x": 79.15,
+        "y": 0,
+        "width": 20.85,
+        "height": 47.32,
+        "path": "79.42 0,100 0,100 46.49,93.43 46.4,93.43 47.32,86.32 47.05,86.32 46.4,79.15 45.85"
+      },
+      {
+        "x": 78.75,
+        "y": 46.68,
+        "width": 21.25,
+        "height": 53.32,
+        "path": "79.28 48.06,94.56 47.51,100 46.68,100 100,78.75 100"
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "width": 85.19,
+        "height": 100,
+        "path": "0 0,79.42 0,79.15 46.12,85.19 46.58,85.06 48.16,79.15 48.25,78.75 100,0 100"
+      }
+    ]
+  }
+]
+
+```
+
+Each panel had a set of coardinated `x` and `y` and dimensions `width` and `height`. This tells the reader where the panels are on the page (all values are in percentages relative to the page).
+
+The `path` property is the clipping path of the panel.
+
+![How clipping works](https://github.com/ricklancee/manga-reader/blob/master/clip-preview.jpg?raw=true)
+*How clipping works*
 
 ### Browser support
 - Chrome  
