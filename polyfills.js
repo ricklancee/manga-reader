@@ -44,4 +44,3 @@ if (typeof HTMLElement !== 'function') {
   _HTMLElement.prototype = HTMLElement.prototype;
   HTMLElement = _HTMLElement;
 }
-

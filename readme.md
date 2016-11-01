@@ -70,7 +70,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 1. Install NPM
 2. install dependencies `npm install`
 3. Build es5 files `./node_modules/.bin/babel --presets=es2015 ./*.js --out-dir es5`
-4. Minifiy files (if needed) `./node_modules/.bin/uglifyjs es5/polyfills.js es5/reader.js es5/main.js --compress --mangle --output es5/reader.min.js`
+4. Minifiy files (if needed) `./node_modules/.bin/uglifyjs es5/polyfills.js es5/reader.js es5/main.js --comments --mangle --output es5/reader.min.js`
 
 ### Todo
 - Loading Spinner when pages and files are beign loaded
