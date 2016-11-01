@@ -78,6 +78,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 - Add click navigation
 - Improve general navigation (i.e. when panels are bigger than the screen height)
 - Add panel effects -> ?
+- Preloading pages
 - Refactor
 - Refactor
 - Refactor
