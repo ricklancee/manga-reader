@@ -58,26 +58,30 @@ class MangaReader extends HTMLElement {
     this._addEventListeners();
 
     // When data is loaded save it
-    this._loadData().then(data => {
-      this.data = data;
-      this.pages = this.data.pages;
+    this.loaded = new Promise(resolve => {
+      this._loadData().then(data => {
+        this.data = data;
+        this.pages = this.data.pages;
 
-      this._createPagination();
+        this._createPagination();
 
-      const hashPagination = this._getPaginationFromHash();
-      if (hashPagination) {
-        this.currentPageIndex = hashPagination[0];
-        this.currentPanelIndex = hashPagination[1];
-      }
+        const hashPagination = this._getPaginationFromHash();
+        if (hashPagination) {
+          this.currentPageIndex = hashPagination[0];
+          this.currentPanelIndex = hashPagination[1];
+        }
 
-      this._setPage(this.currentPageIndex)
-        .then(_ => {
-          this._recalcPage();
-          this._drawPanels(this.currentPanelIndex);
-          this._setPaginationHash();
-          this._setActivePagination();
-          this._positionView();
-        });
+        this._setPage(this.currentPageIndex)
+          .then(_ => {
+            this._recalcPage();
+            this._drawPanels(this.currentPanelIndex);
+            this._setPaginationHash();
+            this._setActivePagination();
+            this._positionView();
+
+            resolve();
+          });
+      });
     });
   }
 
