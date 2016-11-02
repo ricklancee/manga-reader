@@ -76,6 +76,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 - Option to disable 'panel by panel' mode in reader
 - Refactor out pagination to a seperate file (examples/pagination/).
 - Create an examples/ directory with examples (pagination, pagination images, timer).
+- Move out key event listeners, these should not be inside the class.
 - Loading Spinner when pages and files are beign loaded
 - Add Edge browser support
 - Add click navigation
