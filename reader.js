@@ -41,6 +41,7 @@ class MangaReader extends HTMLElement {
       || false;
     this._opacity = 0.025;
     this._fitPanels = false;
+    this._preloadPages = true;
 
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -78,7 +79,9 @@ class MangaReader extends HTMLElement {
             this._setPaginationHash();
             this._setActivePagination();
             this._positionView();
-
+            if (this._preloadPages) {
+              this._preloadNextPage();
+            }
             resolve();
           });
       });
@@ -186,6 +189,18 @@ class MangaReader extends HTMLElement {
       };
 
       img.src = url;
+    });
+  }
+
+  _preloadNextPage() {
+    if (this.currentPageIndex == this.pages.length - 1) {
+      return;
+    }
+    const nextPage = this.currentPageIndex + 1;
+    const nextPageImage = this.pages[nextPage].image;
+
+    this._loadImage(nextPageImage).then(_ => {
+      console.log('preloaded page: '+ (nextPage + 1));
     });
   }
 
@@ -345,6 +360,9 @@ class MangaReader extends HTMLElement {
       this._setPaginationHash();
       this._setActivePagination();
       this._positionView();
+      if (this._preloadPages) {
+        this._preloadNextPage();
+      }
     });
   }
 
