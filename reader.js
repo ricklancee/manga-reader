@@ -28,13 +28,18 @@ class MangaReader extends HTMLElement {
 
   createdCallback() {
     this.data = this.getAttribute('data');
-    this.pages = null;
-    this.canvasEl = null;
-    this.canvas = null;
 
     if (!this.data) {
       return;
     }
+
+    this.pages = null;
+    this.currentPageIndex = 0;
+    this.currentPanelIndex = 0;
+
+    // Elements
+    this.canvasEl = null;
+    this.canvas = null;
 
     // options
     this._fitscreen = false;
@@ -42,16 +47,12 @@ class MangaReader extends HTMLElement {
     this._fitPanels = false;
     this._preloadPages = true;
 
-    this.currentPageIndex = 0;
-    this.currentPanelIndex = 0;
-
+    // Dimensions
     this.pageDimensions = null;
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
-    this.pageOffsetY = 0;
 
     this._createCanvas();
-
     this._addEventListeners();
 
     this.loaded = new Promise(resolve => {
