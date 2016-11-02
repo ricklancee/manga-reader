@@ -39,7 +39,6 @@ class MangaReader extends HTMLElement {
     // options
     this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
       || false;
-    this._pagination = true;
     this._opacity = 0.025;
 
     this.currentPageIndex = 0;
