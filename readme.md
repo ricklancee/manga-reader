@@ -73,6 +73,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 4. Minifiy files (if needed) `./node_modules/.bin/uglifyjs es5/polyfills.js es5/reader.js es5/main.js --comments --mangle --output es5/reader.min.js`
 
 ### Todo
+- Option to disable 'panel by panel' mode in reader
 - Loading Spinner when pages and files are beign loaded
 - Add Edge browser support
 - Add click navigation
