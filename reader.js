@@ -40,6 +40,7 @@ class MangaReader extends HTMLElement {
     this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
       || false;
     this._opacity = 0.025;
+    this._fitPanels = true;
 
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -144,14 +145,6 @@ class MangaReader extends HTMLElement {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
 
-    if (this._fitscreen) {
-      this.fitscreen();
-    } else if (this.pages[this.currentPageIndex].fitscreen) {
-      this.fitscreen();
-    } else {
-      this.fitscreenOff();
-    }
-
     const BCR = this.canvasEl.getBoundingClientRect();
     this.pageDimensions = {
       top: BCR.top + window.scrollY,
@@ -161,14 +154,14 @@ class MangaReader extends HTMLElement {
     };
   }
 
-  fitscreen() {
-    this.canvasEl.style.height = this.screenHeight + 'px';
-    this.canvasEl.style.width = 'auto';
-  }
-
-  fitscreenOff() {
-    this.canvasEl.style.height = '';
-    this.canvasEl.style.width = '';
+  fitscreen(on = true) {
+    if (on) {
+      this.canvasEl.style.height = this.screenHeight + 'px';
+      this.canvasEl.style.width = 'auto';
+    } else {
+      this.canvasEl.style.height = '';
+      this.canvasEl.style.width = '';
+    }
   }
 
   _loadData() {
@@ -373,15 +366,34 @@ class MangaReader extends HTMLElement {
   }
 
   _positionView() {
-    const currentPanel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
-    if (!currentPanel) {
+    const panel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
+
+    if (!panel) {
       return;
     }
+
     const offsetY = this.pageDimensions.top - 15;
     const offsetX = this.pageDimensions.left - 15;
-    const panelY = (currentPanel.y * this.pageDimensions.height / 100) + offsetY;
-    const panelX = (currentPanel.x * this.pageDimensions.width / 100) + offsetX;
+    const panelY = (panel.y * this.pageDimensions.height / 100) + offsetY;
+    const panelX = (panel.x * this.pageDimensions.width / 100) + offsetX;
 
+    const panelHeight = panel.height * this.pageDimensions.height / 100;
+
+    if (this._fitscreen) {
+      this.fitscreen(true);
+    } else if (this.pages[this.currentPageIndex].fitscreen) {
+      this.fitscreen(true);
+    } else if (this._fitPanels && panelHeight > this.screenHeight) {
+      const desiredHeight = this.screenHeight;
+      const resizeTo = this.pageDimensions.height * ((this.screenHeight - 40) / panelHeight);
+      this.canvasEl.style.height = resizeTo + 'px';
+      this.canvasEl.style.width = 'auto';
+    } else {
+      this.canvasEl.style.height = '';
+      this.canvasEl.style.width = '';
+    }
+
+    this._recalcPage();
     window.scrollTo(panelX, panelY);
   }
 }
