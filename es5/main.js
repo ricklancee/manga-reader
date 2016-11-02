@@ -33,13 +33,6 @@ window.addEventListener('load', function (_) {
     }
 
     document.registerElement('manga-reader', MangaReader);
-
-    var reader = document.querySelector('manga-reader');
-    reader.loaded.then(function () {
-      reader.previousPage().then(function () {
-        console.log('previousPage is loaded');
-      });
-    });
   }, function (_) {
     throw new Error('Failed to load polyfills');
   });

@@ -57,8 +57,9 @@ var MangaReader = function (_HTMLElement) {
 
       // options
       this._fitscreen = this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false' || false;
-      this._pagination = true;
       this._opacity = 0.025;
+      this._fitPanels = false;
+      this._preloadPages = true;
 
       this.currentPageIndex = 0;
       this.currentPanelIndex = 0;
@@ -95,7 +96,9 @@ var MangaReader = function (_HTMLElement) {
             _this2._setPaginationHash();
             _this2._setActivePagination();
             _this2._positionView();
-
+            if (_this2._preloadPages) {
+              _this2._preloadNextPage();
+            }
             resolve();
           });
         });
@@ -169,14 +172,6 @@ var MangaReader = function (_HTMLElement) {
       this.screenHeight = window.innerHeight;
       this.screenWidth = window.innerWidth;
 
-      if (this._fitscreen) {
-        this.fitscreen();
-      } else if (this.pages[this.currentPageIndex].fitscreen) {
-        this.fitscreen();
-      } else {
-        this.fitscreenOff();
-      }
-
       var BCR = this.canvasEl.getBoundingClientRect();
       this.pageDimensions = {
         top: BCR.top + window.scrollY,
@@ -188,14 +183,15 @@ var MangaReader = function (_HTMLElement) {
   }, {
     key: 'fitscreen',
     value: function fitscreen() {
-      this.canvasEl.style.height = this.screenHeight + 'px';
-      this.canvasEl.style.width = 'auto';
-    }
-  }, {
-    key: 'fitscreenOff',
-    value: function fitscreenOff() {
-      this.canvasEl.style.height = '';
-      this.canvasEl.style.width = '';
+      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (on) {
+        this.canvasEl.style.height = this.screenHeight + 'px';
+        this.canvasEl.style.width = 'auto';
+      } else {
+        this.canvasEl.style.height = '';
+        this.canvasEl.style.width = '';
+      }
     }
   }, {
     key: '_loadData',
@@ -223,6 +219,19 @@ var MangaReader = function (_HTMLElement) {
         };
 
         img.src = url;
+      });
+    }
+  }, {
+    key: '_preloadNextPage',
+    value: function _preloadNextPage() {
+      if (this.currentPageIndex == this.pages.length - 1) {
+        return;
+      }
+      var nextPage = this.currentPageIndex + 1;
+      var nextPageImage = this.pages[nextPage].image;
+
+      this._loadImage(nextPageImage).then(function (_) {
+        console.log('preloaded page: ' + (nextPage + 1));
       });
     }
   }, {
@@ -394,6 +403,9 @@ var MangaReader = function (_HTMLElement) {
         _this6._setPaginationHash();
         _this6._setActivePagination();
         _this6._positionView();
+        if (_this6._preloadPages) {
+          _this6._preloadNextPage();
+        }
       });
     }
   }, {
@@ -419,15 +431,37 @@ var MangaReader = function (_HTMLElement) {
   }, {
     key: '_positionView',
     value: function _positionView() {
-      var currentPanel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
-      if (!currentPanel) {
+      var panel = this.pages[this.currentPageIndex].panels[this.currentPanelIndex];
+
+      if (!panel) {
         return;
       }
+
+      this._recalcPage();
+
       var offsetY = this.pageDimensions.top - 15;
       var offsetX = this.pageDimensions.left - 15;
-      var panelY = currentPanel.y * this.pageDimensions.height / 100 + offsetY;
-      var panelX = currentPanel.x * this.pageDimensions.width / 100 + offsetX;
+      var panelY = panel.y * this.pageDimensions.height / 100 + offsetY;
+      var panelX = panel.x * this.pageDimensions.width / 100 + offsetX;
 
+      var panelHeight = panel.height * this.pageDimensions.height / 100;
+
+      if (this._fitscreen) {
+        this.fitscreen(true);
+      } else if (this.pages[this.currentPageIndex].fitscreen) {
+        this.fitscreen(true);
+      } else if (this._fitPanels && panelHeight > this.screenHeight) {
+        console.log('auto resize');
+        var desiredHeight = this.screenHeight;
+        var resizeTo = this.pageDimensions.height * ((this.screenHeight - this.pageDimensions.top) / panelHeight);
+        this.canvasEl.style.height = resizeTo + 'px';
+        this.canvasEl.style.width = 'auto';
+      } else {
+        this.canvasEl.style.height = '';
+        this.canvasEl.style.width = '';
+      }
+
+      this._recalcPage();
       window.scrollTo(panelX, panelY);
     }
   }]);
