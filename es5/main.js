@@ -1,8 +1,31 @@
 'use strict';
 
+// Util
+var loadScripts = function loadScripts(urls, succesCB, failCB) {
+  var count = urls.length;
+  var errored = false;
+
+  if (urls.length == 0) return succesCB();
+
+  urls.forEach(function (url) {
+    var script = document.createElement('script');
+    script.onload = function () {
+      if (errored) return;
+      if (! --count) succesCB();
+    };
+    script.onerror = function () {
+      if (errored) return;
+      failCB();
+      errored = true;
+    };
+    script.src = url;
+    document.head.insertBefore(script, document.head.firstChild);
+  });
+};
+
 window.addEventListener('load', function (_) {
-  loadScripts(polyfillsNeeded, function (_) {
-    if (waitForWebcomponents) {
+  loadScripts(window.polyfillsNeeded, function (_) {
+    if (window.waitForWebcomponents) {
       window.addEventListener('WebComponentsReady', function () {
         document.registerElement('manga-reader', MangaReader);
       });
@@ -10,6 +33,13 @@ window.addEventListener('load', function (_) {
     }
 
     document.registerElement('manga-reader', MangaReader);
+
+    var reader = document.querySelector('manga-reader');
+    reader.loaded.then(function () {
+      reader.previousPage().then(function () {
+        console.log('previousPage is loaded');
+      });
+    });
   }, function (_) {
     throw new Error('Failed to load polyfills');
   });
