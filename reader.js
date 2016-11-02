@@ -51,14 +51,10 @@ class MangaReader extends HTMLElement {
     this.screenHeight = window.innerHeight;
     this.pageOffsetY = 0;
 
-    // Init
     this._createCanvas();
-
-    // TODO: Show spinner?
 
     this._addEventListeners();
 
-    // When data is loaded save it
     this.loaded = new Promise(resolve => {
       this._loadData().then(data => {
         this.data = data;
