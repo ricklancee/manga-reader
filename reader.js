@@ -40,7 +40,7 @@ class MangaReader extends HTMLElement {
     this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
       || false;
     this._opacity = 0.025;
-    this._fitPanels = true;
+    this._fitPanels = false;
 
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -372,6 +372,8 @@ class MangaReader extends HTMLElement {
       return;
     }
 
+    this._recalcPage();
+
     const offsetY = this.pageDimensions.top - 15;
     const offsetX = this.pageDimensions.left - 15;
     const panelY = (panel.y * this.pageDimensions.height / 100) + offsetY;
@@ -384,8 +386,9 @@ class MangaReader extends HTMLElement {
     } else if (this.pages[this.currentPageIndex].fitscreen) {
       this.fitscreen(true);
     } else if (this._fitPanels && panelHeight > this.screenHeight) {
+      console.log('auto resize');
       const desiredHeight = this.screenHeight;
-      const resizeTo = this.pageDimensions.height * ((this.screenHeight - 40) / panelHeight);
+      const resizeTo = this.pageDimensions.height * ((this.screenHeight - this.pageDimensions.top) / panelHeight);
       this.canvasEl.style.height = resizeTo + 'px';
       this.canvasEl.style.width = 'auto';
     } else {
