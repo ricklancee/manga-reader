@@ -340,16 +340,14 @@ class MangaReader extends HTMLElement {
   }
 
   nextPage() {
+    if (this.currentPageIndex == this.pages.length - 1) {
+      return new Promise(resolve => {});
+    }
+
     this.currentPageIndex++;
     this.currentPanelIndex = 0;
 
-    if (this.currentPanelIndex > this.pages.length - 1) {
-      this.currentPageIndex = this.pages.length - 1;
-      console.log('last page');
-      return;
-    }
-
-    this._setPage(this.currentPageIndex).then(_ => {
+    return this._setPage(this.currentPageIndex).then(_ => {
       this._recalcPage();
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
@@ -359,16 +357,14 @@ class MangaReader extends HTMLElement {
   }
 
   previousPage() {
+    if (this.currentPageIndex == 0) {
+      return new Promise(resolve => {});
+    }
+
     this.currentPageIndex--;
     this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
 
-    if (this.currentPanelIndex < 0) {
-      this.currentPageIndex = 0;
-      console.log('First Page');
-      return;
-    }
-
-    this._setPage(this.currentPageIndex).then(_ => {
+    return this._setPage(this.currentPageIndex).then(_ => {
       this._recalcPage();
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
