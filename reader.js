@@ -37,8 +37,7 @@ class MangaReader extends HTMLElement {
     }
 
     // options
-    this._fitscreen = (this.hasAttribute('fitscreen') && this.getAttribute('fitscreen') !== 'false')
-      || false;
+    this._fitscreen = false;
     this._opacity = 0.025;
     this._fitPanels = false;
     this._preloadPages = true;
