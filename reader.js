@@ -52,8 +52,12 @@ class MangaReader extends HTMLElement {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
 
+
     this._createCanvas();
     this._addEventListeners();
+
+    // Start a loadingSpinner after 250 milliseconds.
+    this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
     this.loaded = new Promise(resolve => {
       this._loadData().then(data => {
@@ -78,6 +82,15 @@ class MangaReader extends HTMLElement {
             if (this._preloadPages) {
               this._preloadNextPage();
             }
+
+            console.log(this._loadingTimer);
+            // Clear the timer.
+            if (this._loadingTimer) {
+              window.clearTimeout(this._loadingTimer);
+              this._hideLoading();
+              this._loadingTimer = null;
+            }
+
             resolve();
           });
       });
@@ -138,6 +151,20 @@ class MangaReader extends HTMLElement {
     window.addEventListener('hashchange', event => {
       window.location.reload();
     });
+  }
+
+  _showLoading() {
+    const spinner = document.createElement('div');
+    spinner.classList.add('manga-reader__spinner');
+    this.appendChild(spinner);
+    console.log('Show loading!!');
+  }
+
+  _hideLoading() {
+    const spinner = document.querySelector('.manga-reader__spinner');
+    if (spinner) {
+      spinner.remove();
+    }
   }
 
   _recalcPage() {
@@ -350,12 +377,21 @@ class MangaReader extends HTMLElement {
     this.currentPageIndex++;
     this.currentPanelIndex = 0;
 
+    this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
+
     return this._setPage(this.currentPageIndex).then(_ => {
+      if (this._loadingTimer) {
+        window.clearTimeout(this._loadingTimer);
+        this._loadingTimer = null;
+        this._hideLoading();
+      }
+
       this._recalcPage();
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
       this._setActivePagination();
       this._positionView();
+
       if (this._preloadPages) {
         this._preloadNextPage();
       }

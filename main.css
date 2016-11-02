@@ -35,6 +35,7 @@ label {
 }
 
 manga-reader {
+  position: relative;
   display: block;
   width: auto;
   padding: 0 15px;
@@ -68,4 +69,42 @@ manga-reader .pagination li {
 manga-reader .pagination a.active {
   text-decoration: none;
   font-weight: bold;
+}
+
+manga-reader .manga-reader__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -25px;
+  margin-top: -25px;
+  display: block;
+  width: 50px;
+  height: 20px;
+}
+manga-reader .manga-reader__spinner:after {
+  display: block;
+  width: 100%;
+  content: '';
+  text-align: center;
+  animation-name: manga-reader-loader;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes manga-reader-loader {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+  100% {
+    content: '';
+  }
 }
