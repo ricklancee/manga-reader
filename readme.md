@@ -73,6 +73,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 
 ### Todo
 - Option to disable 'panel by panel' mode in reader
+- Add manga meta data example
 - Add pagination example
 - Add autoview example
 - Add Edge browser support
