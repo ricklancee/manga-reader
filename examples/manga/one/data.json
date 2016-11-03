@@ -5,7 +5,7 @@
   "pageCount": 4,
   "pages": [
     {
-      "image": "manga/one/01.jpg",
+      "image": "01.jpg",
       "panels": [
         {
           "x": 79.15,
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "image": "manga/one/02.jpg",
+      "image": "02.jpg",
       "panels": [
         {
           "x": 6.07,
@@ -64,7 +64,7 @@
       ]
     },
     {
-      "image": "manga/one/03.jpg",
+      "image": "03.jpg",
       "fitscreen": true,
       "panels": [
         {
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "image": "manga/one/04.jpg",
+      "image": "04.jpg",
       "panels": [
         {
           "x": 5.84,

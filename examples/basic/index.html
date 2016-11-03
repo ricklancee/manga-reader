@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="author" content="" />
+    <meta name="viewport" content="width=device-width">
+    <title></title>
+
+    <link rel="stylesheet" href="../../reader.css">
+</head>
+<body>
+    <main>
+      <h1>Manga reader</h1>
+      <manga-reader data="../manga/one/data.json"></manga-reader>
+    </main>
+
+    <!-- scripts -->
+    <script src="../polyfills/polyfills.js"></script>
+    <script src="../../reader.js"></script>
+    <script>
+      // Initialize the reader
+      window.addEventListener('polyFillsLoaded', () => {
+        document.registerElement('manga-reader', MangaReader);
+      });
+    </script>
+</body>
+</html>

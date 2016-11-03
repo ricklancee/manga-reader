@@ -33,6 +33,8 @@ class MangaReader extends HTMLElement {
       return;
     }
 
+    this.basePath = this.data.substring(0, this.data.lastIndexOf('data.json'));
+
     this.pages = null;
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -46,6 +48,7 @@ class MangaReader extends HTMLElement {
     this._opacity = 0.025;
     this._fitPanels = false;
     this._preloadPages = true;
+    this._appendBasePath = true;
 
     // Dimensions
     this.pageDimensions = null;
@@ -83,7 +86,6 @@ class MangaReader extends HTMLElement {
               this._preloadNextPage();
             }
 
-            console.log(this._loadingTimer);
             // Clear the timer.
             if (this._loadingTimer) {
               window.clearTimeout(this._loadingTimer);
@@ -200,6 +202,18 @@ class MangaReader extends HTMLElement {
   }
 
   _loadImage(url) {
+
+    // If the image url is an remote url
+    // use that, otherwise append the base path of the
+    // json.
+    try {
+      new URL(url);
+    } catch(e) {
+      if (this._appendBasePath) {
+        url = this.basePath + url;
+      }
+    }
+
     return new Promise((resolve, reject) => {
       const img = new Image();
 

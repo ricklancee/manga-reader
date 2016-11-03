@@ -23,19 +23,24 @@
     });
   };
 
+  const basePath = '../';
   const polyfillsNeeded = [];
   let waitForWebcomponents = false;
 
   if (!('Promise' in window)) {
-    polyfillsNeeded.push('polyfills/promise.js');
+    polyfillsNeeded.push(basePath+'polyfills/promise.js');
+  }
+
+  if(!('URL') in window) {
+
   }
 
   if (!('fetch' in window)) {
-    polyfillsNeeded.push('polyfills/fetch/fetch.js');
+    polyfillsNeeded.push(basePath+'polyfills/fetch/fetch.js');
   }
 
   if (!('registerElement' in document)) {
-    polyfillsNeeded.push('polyfills/webcomponentsjs/CustomElements.min.js');
+    polyfillsNeeded.push(basePath+ 'polyfills/webcomponentsjs/CustomElements.min.js');
     waitForWebcomponents = true;
   }
 
