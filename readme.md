@@ -14,40 +14,58 @@ The reader is added to the html page.
 <manga-reader data="manga/one/data.json"></manga-reader>
 ```
 
-Pages are loaded with a supplied json file. The json file looks as follows:
+Pages are loaded with a manga json file. The json file looks as follows:
 
 ```json
-[
-  {
-    "image": "manga/one/01.jpg",
-    "panels": [
-      {
-        "x": 79.15,
-        "y": 0,
-        "width": 20.85,
-        "height": 47.32,
-        "path": "79.42 0,100 0,100 46.49,93.43 46.4,93.43 47.32,86.32 47.05,86.32 46.4,79.15 45.85"
-      },
-      {
-        "x": 78.75,
-        "y": 46.68,
-        "width": 21.25,
-        "height": 53.32,
-        "path": "79.28 48.06,94.56 47.51,100 46.68,100 100,78.75 100"
-      },
-      {
-        "x": 0,
-        "y": 0,
-        "width": 85.19,
-        "height": 100,
-        "path": "0 0,79.42 0,79.15 46.12,85.19 46.58,85.06 48.16,79.15 48.25,78.75 100,0 100"
-      }
-    ]
-  }
-]
-
+{
+  "title": "One-Punch Man",
+  "author": ["Yusuke Murata", "ONE"],
+  "tags": ["action", "comedy", "parody", "sci-fi", "super power", "supernatural"],
+  "pageCount": 4,
+  "pages": [
+    {
+      "image": "01.jpg",
+      "panels": [
+        {
+          "x": 79.15,
+          "y": 0,
+          "width": 20.85,
+          "height": 47.32,
+          "path": "79.42 0,100 0,100 46.49,93.43 46.4,93.43 47.32,86.32 47.05,86.32 46.4,79.15 45.85"
+        },
+        {
+          "x": 78.75,
+          "y": 46.68,
+          "width": 21.25,
+          "height": 53.32,
+          "path": "79.28 48.06,94.56 47.51,100 46.68,100 100,78.75 100"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "width": 85.19,
+          "height": 100,
+          "path": "0 0,79.42 0,79.15 46.12,85.19 46.58,85.06 48.16,79.15 48.25,78.75 100,0 100"
+        }
+      ]
+    }
+  ]
+}
 ```
-*All values are in percentages relative to the page.* 
+
+#### properties
+- **title:** The title of the manga
+- **author:** The author of the manga
+- **tags:** An array containg all the manga tags
+- **pageCount:** how many pages the manga has
+- **page:** An array containing page objects
+- **page:image:** The url of the page image; These should be relative to the json file, or full urls
+- **panels:** An array containing all the locations and dimensions of the page panels. The values are expressed in percentages proportional to the page.
+- **panels:x:** The x (left) position of the panel
+- **panels:y:** The y (top) position of the panel
+- **panels:width:** The width of the panel
+- **panels:height:** The height of the panel
+- **panels:path:** The path of the clipping mask of the panel. (x y, x y,...)
 
 Each panel has a set of coardinates (`x` and `y`) and dimensions (`width` and `height`). These are the panel boundaries and tells the reader where the panel is on the page.
 
