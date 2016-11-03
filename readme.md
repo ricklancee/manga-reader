@@ -53,7 +53,7 @@ Pages are loaded with a manga json file. The json file looks as follows:
 }
 ```
 
-#### properties
+#### Properties
 - **`title: (string)`** The title of the manga
 - **`author: (string|array)`** The author(s) of the manga
 - **`tags: (array)`** An array containg all the manga tags
@@ -65,7 +65,7 @@ Pages are loaded with a manga json file. The json file looks as follows:
 - **`panels:y: (int|float)`** The y (top) position of the panel
 - **`panels:width: (int|float)`** The width of the panel
 - **`panels:height: (int|float)`** The height of the panel
-- **`panels:path: (int|float)`** The path of the clipping mask of the panel. (x y, x y,...)
+- **`panels:path: (string)`** The path of the clipping mask of the panel. (x y, x y,...)
 
 Each panel has a set of coardinates (`x` and `y`) and dimensions (`width` and `height`). These are the panel boundaries and tells the reader where the panel is on the page.
 
