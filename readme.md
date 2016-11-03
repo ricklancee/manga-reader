@@ -54,18 +54,18 @@ Pages are loaded with a manga json file. The json file looks as follows:
 ```
 
 #### properties
-- **title:** The title of the manga
-- **author:** The author of the manga
-- **tags:** An array containg all the manga tags
-- **pageCount:** how many pages the manga has
-- **page:** An array containing page objects
-- **page:image:** The url of the page image; These should be relative to the json file, or full urls
-- **panels:** An array containing all the locations and dimensions of the page panels. The values are expressed in percentages proportional to the page.
-- **panels:x:** The x (left) position of the panel
-- **panels:y:** The y (top) position of the panel
-- **panels:width:** The width of the panel
-- **panels:height:** The height of the panel
-- **panels:path:** The path of the clipping mask of the panel. (x y, x y,...)
+- **title: (string)** The title of the manga
+- **author: (string|array)** The author(s) of the manga
+- **tags: (array)** An array containg all the manga tags
+- **pageCount: (int)** how many pages the manga has
+- **page: (array)** An array containing page objects
+- **page:image: (string)** The url of the page image; These should be relative to the json file, or full urls
+- **panels: (array)** An array containing all the locations and dimensions of the page panels. The values are expressed in percentages proportional to the page.
+- **panels\:x: (int|float)** The x (left) position of the panel
+- **panels:y: (int|float)** The y (top) position of the panel
+- **panels:width: (int|float)** The width of the panel
+- **panels:height: (int|float)** The height of the panel
+- **panels:path: (int|float)** The path of the clipping mask of the panel. (x y, x y,...)
 
 Each panel has a set of coardinates (`x` and `y`) and dimensions (`width` and `height`). These are the panel boundaries and tells the reader where the panel is on the page.
 
