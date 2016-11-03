@@ -32,7 +32,7 @@
   }
 
   if(!('URL') in window) {
-
+    polyfillsNeeded.push(basePath+'polyfills/url.js');
   }
 
   if (!('fetch' in window)) {
