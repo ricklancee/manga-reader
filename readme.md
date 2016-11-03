@@ -73,14 +73,15 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 
 ### Todo
 - Option to disable 'panel by panel' mode in reader
-- Refactor out pagination to a seperate file (examples/pagination/).
-- Create an examples/ directory with examples (pagination, pagination images, timer).
-- Move out key event listeners, these should not be inside the class.
-- ~~Loading Spinner when pages and files are beign loaded~~
+- Add pagination example
+- Add autoview example
 - Add Edge browser support
 - Add click navigation
 - Improve general navigation (i.e. when panels are bigger than the screen height)
-- Add panel effects -> ?
+- ?? -> Add panel effects
+- ?? -> Move out key event listeners, these should not be inside the class.
+- ~~Loading Spinner when pages and files are beign loaded~~
+- ~~Create an examples/ directory.~~
 - ~~Preloading pages~~
 - Refactor
 - Refactor

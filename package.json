@@ -7,7 +7,7 @@
     "url": "git+https://github.com/ricklancee/manga-reader.git"
   },
   "scripts": {
-    "build": "./node_modules/.bin/babel --presets=es2015 ./*.js --out-dir es5 && ./node_modules/.bin/uglifyjs es5/polyfills.js es5/reader.js es5/main.js --comments --mangle --output es5/reader.min.js"
+    "build": "./node_modules/.bin/babel --presets=es2015 ./reader.js --out-dir es5 && ./node_modules/.bin/uglifyjs es5/reader.js --comments --mangle --output es5/reader.min.js"
   },
   "author": "Rick Lancee",
   "license": "MIT",
