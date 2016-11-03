@@ -61,7 +61,7 @@ Pages are loaded with a manga json file. The json file looks as follows:
 - **page: (array)** An array containing page objects
 - **page:image: (string)** The url of the page image; These should be relative to the json file, or full urls
 - **panels: (array)** An array containing all the locations and dimensions of the page panels. The values are expressed in percentages proportional to the page.
-- **panels\:x: (int|float)** The x (left) position of the panel
+- **panels`:x:` (int|float)** The x (left) position of the panel
 - **panels:y: (int|float)** The y (top) position of the panel
 - **panels:width: (int|float)** The width of the panel
 - **panels:height: (int|float)** The height of the panel
