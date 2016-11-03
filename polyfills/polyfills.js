@@ -23,7 +23,14 @@
     });
   };
 
-  const basePath = '../';
+
+  // The base path of the polyfills
+  const scriptSrc = document.querySelector('script[src*="polyfills/polyfills.js"]').src;
+  let basePath = scriptSrc.match(/^(.*)polyfills\/polyfills\.js$/i);
+  if (basePath) {
+    basePath = basePath[1];
+  }
+
   const polyfillsNeeded = [];
   let waitForWebcomponents = false;
 
