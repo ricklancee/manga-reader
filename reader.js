@@ -55,6 +55,7 @@ class MangaReader extends HTMLElement {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
 
+    this.loadedEvent = new CustomEvent('loaded');
 
     this._createCanvas();
     this._addEventListeners();
@@ -62,40 +63,38 @@ class MangaReader extends HTMLElement {
     // Start a loadingSpinner after 250 milliseconds.
     this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
-    this.loaded = new Promise(resolve => {
-      this._loadData().then(data => {
-        this.data = data;
-        this.pages = this.data.pages;
+    this._loadData().then(data => {
+      this.data = data;
+      this.pages = this.data.pages;
 
-        this._createPagination();
+      this._createPagination();
 
-        const hashPagination = this._getPaginationFromHash();
-        if (hashPagination) {
-          this.currentPageIndex = hashPagination[0];
-          this.currentPanelIndex = hashPagination[1];
-        }
+      const hashPagination = this._getPaginationFromHash();
+      if (hashPagination) {
+        this.currentPageIndex = hashPagination[0];
+        this.currentPanelIndex = hashPagination[1];
+      }
 
-        this._setPage(this.currentPageIndex)
-          .then(_ => {
-            this._recalcPage();
-            this._drawPanels(this.currentPanelIndex);
-            this._setPaginationHash();
-            this._setActivePagination();
-            this._positionView();
-            if (this._preloadPages) {
-              this._preloadNextPage();
-            }
+      this._setPage(this.currentPageIndex)
+        .then(_ => {
+          this._recalcPage();
+          this._drawPanels(this.currentPanelIndex);
+          this._setPaginationHash();
+          this._setActivePagination();
+          this._positionView();
+          if (this._preloadPages) {
+            this._preloadNextPage();
+          }
 
-            // Clear the timer.
-            if (this._loadingTimer) {
-              window.clearTimeout(this._loadingTimer);
-              this._hideLoading();
-              this._loadingTimer = null;
-            }
+          // Clear the timer.
+          if (this._loadingTimer) {
+            window.clearTimeout(this._loadingTimer);
+            this._hideLoading();
+            this._loadingTimer = null;
+          }
 
-            resolve();
-          });
-      });
+          this.dispatchEvent(this.loadedEvent);
+        });
     });
   }
 
