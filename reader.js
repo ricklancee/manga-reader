@@ -55,6 +55,7 @@ class MangaReader extends HTMLElement {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
 
+    // Events
     this.loadedEvent = new CustomEvent('loaded');
 
     this._createCanvas();
@@ -136,6 +137,10 @@ class MangaReader extends HTMLElement {
   _addEventListeners() {
     window.addEventListener('resize', _ => {
       this._recalcPage();
+    });
+
+    this.canvasEl.addEventListener('click', event => {
+      this.nextPanel();
     });
 
     window.addEventListener('keydown', event => {
