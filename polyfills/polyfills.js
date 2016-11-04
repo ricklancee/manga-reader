@@ -50,7 +50,7 @@
     waitForWebcomponents = true;
   }
 
-  // Safari bug work around, safari sees HTMLElement
+  // Shim for a Safari bug work around, safari sees HTMLElement
   // as an object not a function.
   if (typeof HTMLElement !== 'function') {
     var _HTMLElement = function _HTMLElement() {};
