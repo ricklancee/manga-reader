@@ -58,7 +58,7 @@
     HTMLElement = _HTMLElement;
   }
 
-  var polyFillsLoadedEvent = new CustomEvent('polyFillsLoaded', {
+  var polyFillsLoadedEvent = new CustomEvent('polyfillsLoaded', {
     bubbles: true
   });
 
