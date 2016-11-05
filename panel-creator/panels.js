@@ -8,15 +8,15 @@ class Panels {
       this.svg = document.querySelector('svg');
       this.plotpoints = document.querySelector('.plotpoints code');
 
-      this.page.style.width = this.page.width + 'px';
-      this.originalPageWidth = this.page.width;
-
       this.clearButton = document.querySelector('.clear-button');
       this.zoomInButton = document.querySelector('.zoom-in');
       this.zoomOutButton = document.querySelector('.zoom-out');
 
+      this.fileUploadButton = document.querySelector('.upload-files');
 
+      this.pageObject = {};
       this.panels = [];
+      this.filename = '';
 
       this.currentPath = [];
       this.currentPathEl = null;
@@ -27,6 +27,9 @@ class Panels {
       this.zoom = 1;
 
       this._addEventListeners();
+
+      this.page.style.width = this.page.width + 'px';
+      this.originalPageWidth = this.page.width;
       this._recalc();
       this._setSvgDimensionsToImage();
     }
@@ -72,14 +75,17 @@ class Panels {
       this.svg.addEventListener('click', (event) => {
         if (this.shiftModifier) {
           if (event.target.nodeName === 'path') {
-            event.stopPropagation();
 
             const index = parseInt(event.target.getAttribute('data-index'));
-            this.panels.splice(index, 1);
-            event.target.remove();
-            this._resetPathIndexes();
-            this._updatePlotpoints();
+            const currentIndex = parseInt(this.currentPathEl.getAttribute('data-index'));
 
+            if (index !== currentIndex) {
+              this.panels.splice(index, 1);
+              event.target.remove();
+              this._resetPathIndexes();
+              this._updatePlotpoints();
+              event.stopPropagation();
+            }
           }
         }
       });
@@ -103,16 +109,11 @@ class Panels {
           e.clearSelection();
       });
 
-      this.clearButton.addEventListener('click', () => {
-        this.plotpoints.innerHTML = 'No panels plotted.';
-        this.panels = [];
-        this.svg.querySelectorAll('path').forEach(pathEl => {
-          pathEl.remove();
-        });
-      });
-
+      this.clearButton.addEventListener('click', this._clearAllPanels.bind(this));
       this.zoomInButton.addEventListener('click', this._zoomIn.bind(this));
       this.zoomOutButton.addEventListener('click', this._zoomOut.bind(this));
+
+      this.fileUploadButton.addEventListener('change', this._handleFileSelect.bind(this));
     }
 
     _zoomIn() {
@@ -136,6 +137,14 @@ class Panels {
       this._setSvgDimensionsToImage();
     }
 
+    _clearAllPanels() {
+      this.plotpoints.innerHTML = 'No panels plotted.';
+      this.panels = [];
+      this.svg.querySelectorAll('path').forEach(pathEl => {
+        pathEl.remove();
+      });
+    }
+
     _recalc() {
       const BCR = this.page.getBoundingClientRect();
       this.pageDimensions = {
@@ -152,6 +161,14 @@ class Panels {
     }
 
     _onPageClick(event) {
+      if (this.currentlyDrawing && this.shiftModifier) {
+        const reversed = this.currentPathString.split("").reverse().join("");
+        this.currentPathString = reversed.replace(/^(.*?L)/, '').split("").reverse().join("");
+        this.currentPathEl.setAttribute('d', this.currentPathString);
+        this.currentPath.pop();
+        return;
+      }
+
       const pageX = event.pageX - this.pageDimensions.left + this.container.scrollLeft;
       const pageY = event.pageY - this.pageDimensions.top  + this.container.scrollTop;
 
@@ -230,11 +247,54 @@ class Panels {
     }
 
     _updatePlotpoints() {
+      this.pageObject.image = this.filename;
+      this.pageObject.panels = this.panels;
       if (this.panels.length > 0) {
-        var json = JSON.stringify(this.panels, null, 2);
-        this.plotpoints.innerHTML = json;
+        var json = JSON.stringify(this.pageObject, null, 2);
+        this.plotpoints.innerHTML = this.pageObject;
       } else {
         this.plotpoints.innerHTML = 'No panels plotted.';
+      }
+    }
+
+    _setImage(image) {
+      this._clearAllPanels();
+
+      this.page.src = image;
+
+      setTimeout(() => {
+        this.page.style.width = '';
+
+        this._recalc();
+        this.originalPageWidth = this.pageDimensions.width;
+        this._setSvgDimensionsToImage();
+      }, 200);
+
+    }
+
+    _handleFileSelect(event) {
+      const files = event.target.files; // FileList object
+
+      // Loop through the FileList and render image files as thumbnails.
+      for (var i = 0, f; f = files[i]; i++) {
+
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+          continue;
+        }
+
+        const reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = ((theFile) => {
+          return (e) => {
+            this._setImage(e.target.result);
+            this.filename = theFile.name;
+          };
+        })(f);
+
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
       }
     }
 }

@@ -28,6 +28,7 @@
         height: 100vh;
         background-color: #fff;
         overflow: scroll;
+        flex: 1;
       }
       .plotbox svg {
         position: absolute;
@@ -52,19 +53,23 @@
         margin: 50px;
       }
       .plotpoints {
-        width: 420px;
+        width: 330px;
         height: 100vh;
         border-left: 1px solid #d4d4d4;
         overflow: hidden;
-        padding: 0 20px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
       }
-
+      .plotpoints p {
+        margin-top: 0;
+      }
       .plotpoints pre {
         flex: 1;
         margin: 0;
         margin-top: 10px;
+        overflow: scroll;
+        background-color: #f9f9f9;
       }
 
       .plotpoints .buttons {
@@ -76,13 +81,12 @@
         height: 100%;
         padding: 10px;
         width: 100%;
-        overflow: scroll;
-        background-color: #f9f9f9;
+
       }
       .zoom-controls {
         position: absolute;
         top: 10px;
-        right: 307px;
+        right: 340px;
         display: flex;
         z-index: 1;
       }
@@ -107,15 +111,21 @@
       </div>
       <div class="plotbox">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-        <img src="../examples/manga/delivery/0001.jpg" class="image">
+        <img src="" class="image">
       </div>
       <div class="plotpoints">
         <p><strong>Click</strong> to create panels.<br> <strong>Press enter</strong> to finish a panel.<br> <strong>Shift-click</strong> on a panel to delete it. </p>
         <pre><code>No panels plotted.</code></pre>
+        <p>No previous data.</p>
+
         <div class="buttons">
           <button class="copy-button" data-clipboard-target=".plotpoints code">Copy panels</button>
           <button class="clear-button">Clear all panels</button>
         </div>
+        <label>
+          Upload manga directory
+          <input type="file" class="upload-files" name="files[]" multiple>
+        </label>
       </div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
