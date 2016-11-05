@@ -101,7 +101,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 - ~~Create an examples/ directory.~~
 - ~~Preloading pages~~
 - ~~Add click navigation~~
-- ~~Improve general navigation (i.e. when panels are bigger than the screen height)~~ See [issue 1#](https://github.com/ricklancee/manga-reader/issues/1)
+- See [issue 1#](https://github.com/ricklancee/manga-reader/issues/1): ~~Improve general navigation (i.e. when panels are bigger than the screen height)~~ 
 - Refactor
 - Refactor
 - Refactor
