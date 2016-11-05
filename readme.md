@@ -95,13 +95,13 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 - Add pagination example
 - Add autoview example
 - Add Edge browser support
-- Improve general navigation (i.e. when panels are bigger than the screen height)
 - ?? -> Add panel effects
 - ?? -> Move out key event listeners, these should not be inside the class.
 - ~~Loading Spinner when pages and files are beign loaded~~
 - ~~Create an examples/ directory.~~
 - ~~Preloading pages~~
 - ~~Add click navigation~~
+- ~~Improve general navigation (i.e. when panels are bigger than the screen height)~~ See [issue 1#](https://github.com/ricklancee/manga-reader/issues/1)
 - Refactor
 - Refactor
 - Refactor
