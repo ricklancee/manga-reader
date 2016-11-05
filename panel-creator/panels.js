@@ -4,28 +4,20 @@ class Panels {
 
     constructor () {
       this.container = document.querySelector('.plotbox');
-      this.page = document.querySelector('.plotbox .image');
+      this.pageImage = document.querySelector('.plotbox .image');
       this.svg = document.querySelector('svg');
       this.resultsContainer = document.querySelector('.results');
 
+      // Buttons
       this.clearButton = document.querySelector('.clear-button');
       this.zoomInButton = document.querySelector('.zoom-in');
       this.zoomOutButton = document.querySelector('.zoom-out');
-
       this.fileUploadButton = document.querySelector('.upload-files');
 
+      // Variables
       this.loadedImages = [];
       this.currentLoadedImageIndex = null;
-
-      const imageData = window.localStorage.getItem('panels-image-data');
-      if (imageData) {
-        console.log(imageData);
-      }
-
-      this.pageObject = {};
-      this.panels = [];
-      this.filename = '';
-
+      this.currentPanels = [];
       this.currentPath = [];
       this.currentPathEl = null;
       this.currentPathString = '';
@@ -36,8 +28,8 @@ class Panels {
 
       this._addEventListeners();
 
-      this.page.style.width = this.page.width + 'px';
-      this.originalPageWidth = this.page.width;
+      this.pageImage.style.width = this.pageImage.width + 'px';
+      this.originalPageWidth = this.pageImage.width;
       this._recalc();
       this._setSvgDimensionsToImage();
     }
@@ -66,7 +58,7 @@ class Panels {
             const path = this.currentPath;
             const panel = this._calculateRectangle(path);
             panel.path = path.join(', ');
-            this.panels.push(panel);
+            this.currentPanels.push(panel);
             this._updatePlotpoints();
           }
 
@@ -86,7 +78,7 @@ class Panels {
 
             const index = parseInt(event.target.getAttribute('data-index'));
 
-            this.panels.splice(index, 1);
+            this.currentPanels.splice(index, 1);
             event.target.remove();
             this._resetPathIndexes();
             this._updatePlotpoints();
@@ -147,7 +139,7 @@ class Panels {
     }
 
     _setZoom() {
-      this.page.style.width = (this.originalPageWidth * this.zoom) + 'px';
+      this.pageImage.style.width = (this.originalPageWidth * this.zoom) + 'px';
 
       this._recalc();
       this._setSvgDimensionsToImage();
@@ -155,7 +147,7 @@ class Panels {
 
     _zoomIn() {
       this.zoom += 0.1;
-      this.page.style.width = (this.originalPageWidth * this.zoom) + 'px';
+      this.pageImage.style.width = (this.originalPageWidth * this.zoom) + 'px';
 
       this._recalc();
       this._setSvgDimensionsToImage();
@@ -167,7 +159,7 @@ class Panels {
       if (this.zoom <= 0.5) {
         this.zoom = 0.5;
       }
-      this.page.style.width = (this.originalPageWidth * this.zoom) + 'px';
+      this.pageImage.style.width = (this.originalPageWidth * this.zoom) + 'px';
 
 
       this._recalc();
@@ -176,15 +168,15 @@ class Panels {
 
     _clearAllPanels() {
       // this.plotpoints.innerHTML = 'No panels plotted.';
-      this.panels = [];
+      this.currentPanels = [];
       this.svg.querySelectorAll('path').forEach(pathEl => {
         pathEl.remove();
       });
     }
 
     _recalc() {
-      const BCR = this.page.getBoundingClientRect();
-      this.pageDimensions = {
+      const BCR = this.pageImage.getBoundingClientRect();
+      this.pageImageDimensions = {
         top: BCR.top + this.container.scrollTop,
         left: BCR.left + this.container.scrollLeft,
         width: BCR.width,
@@ -193,8 +185,8 @@ class Panels {
     }
 
     _setSvgDimensionsToImage() {
-      this.svg.style.width = this.pageDimensions.width + 'px';
-      this.svg.style.height = this.pageDimensions.height + 'px';
+      this.svg.style.width = this.pageImageDimensions.width + 'px';
+      this.svg.style.height = this.pageImageDimensions.height + 'px';
     }
 
     _onPageClick(event) {
@@ -206,14 +198,14 @@ class Panels {
         return;
       }
 
-      const pageX = event.pageX - this.pageDimensions.left + this.container.scrollLeft;
-      const pageY = event.pageY - this.pageDimensions.top  + this.container.scrollTop;
+      const pageX = event.pageX - this.pageImageDimensions.left + this.container.scrollLeft;
+      const pageY = event.pageY - this.pageImageDimensions.top  + this.container.scrollTop;
 
-      const x = Math.min(Math.max(pageX, 0), this.pageDimensions.width);
-      const y = Math.min(Math.max(pageY, 0), this.pageDimensions.height);
+      const x = Math.min(Math.max(pageX, 0), this.pageImageDimensions.width);
+      const y = Math.min(Math.max(pageY, 0), this.pageImageDimensions.height);
 
-      const percentageX = Math.round((x * 100) / this.pageDimensions.width * 100) / 100;
-      const percentageY = Math.round((y * 100) / this.pageDimensions.height * 100) / 100;
+      const percentageX = Math.round((x * 100) / this.pageImageDimensions.width * 100) / 100;
+      const percentageY = Math.round((y * 100) / this.pageImageDimensions.height * 100) / 100;
 
 
       if (!this.currentlyDrawing) {
@@ -238,7 +230,7 @@ class Panels {
 
       this.currentPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       this.currentPathEl.setAttribute('d', '');
-      this.currentPathEl.setAttribute('data-index', this.panels.length);
+      this.currentPathEl.setAttribute('data-index', this.currentPanels.length);
       this.currentPathEl.classList.add('active', 'path');
 
       this.svg.appendChild(this.currentPathEl);
@@ -285,8 +277,8 @@ class Panels {
     _updatePlotpoints() {
 
       let data;
-      if (this.panels.length > 0) {
-        data = JSON.stringify(this.panels, null, 2);
+      if (this.currentPanels.length > 0) {
+        data = JSON.stringify(this.currentPanels, null, 2);
       } else {
         data = 'No panels plotted.';
       }
@@ -309,11 +301,11 @@ class Panels {
     _loadImage(image) {
       this._clearAllPanels();
 
-      this.page.src = image;
+      this.pageImage.src = image;
 
-      this.page.style.width = '';
+      this.pageImage.style.width = '';
       this._recalc();
-      this.originalPageWidth = this.pageDimensions.width;
+      this.originalPageWidth = this.pageImageDimensions.width;
       this._setSvgDimensionsToImage();
     }
 
