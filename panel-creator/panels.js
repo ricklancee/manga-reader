@@ -159,7 +159,7 @@ class Panels {
     }
 
     _zoomIn() {
-      this.zoom += 0.1;
+      this.zoom += 0.2;
       this.pageImage.style.width = (this.originalPageWidth * this.zoom) + 'px';
 
       this._recalc();
@@ -167,7 +167,7 @@ class Panels {
     }
 
     _zoomOut() {
-      this.zoom -= 0.1;
+      this.zoom -= 0.2;
 
       if (this.zoom <= 0.5) {
         this.zoom = 0.5;
@@ -424,6 +424,16 @@ class Panels {
     }
 
     _loadImageData() {
+
+      for (var i = 0; i < this.loadedImages.length; i++) {
+        if (!this.pages[i]) {
+          this.pages.push({
+            image: this.loadedImages[i].filename,
+            panels: []
+          })
+        }
+      }
+
       this._fillResultsContainer(this.loadedImages);
       // load first image
       this._setImage(0);
