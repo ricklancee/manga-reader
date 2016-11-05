@@ -323,7 +323,7 @@ class MangaReader extends HTMLElement {
     this.canvas.save();
     this.canvas.beginPath();
     for (var i = 0; i < len; i++) {
-      const coards = path[i].split(' ');
+      const coards = path[i].trim().split(' ');
 
       const x = coards[0] * this.canvasEl.width / 100;
       const y = coards[1] * this.canvasEl.height / 100;
