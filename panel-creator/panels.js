@@ -74,18 +74,15 @@ class Panels {
 
       this.svg.addEventListener('click', (event) => {
         if (this.shiftModifier) {
-          if (event.target.nodeName === 'path') {
+          if (!this.currentlyDrawing && event.target.nodeName === 'path') {
 
             const index = parseInt(event.target.getAttribute('data-index'));
-            const currentIndex = parseInt(this.currentPathEl.getAttribute('data-index'));
 
-            if (index !== currentIndex) {
-              this.panels.splice(index, 1);
-              event.target.remove();
-              this._resetPathIndexes();
-              this._updatePlotpoints();
-              event.stopPropagation();
-            }
+            this.panels.splice(index, 1);
+            event.target.remove();
+            this._resetPathIndexes();
+            this._updatePlotpoints();
+            event.stopPropagation();
           }
         }
       });
@@ -251,7 +248,7 @@ class Panels {
       this.pageObject.panels = this.panels;
       if (this.panels.length > 0) {
         var json = JSON.stringify(this.pageObject, null, 2);
-        this.plotpoints.innerHTML = this.pageObject;
+        this.plotpoints.innerHTML = json;
       } else {
         this.plotpoints.innerHTML = 'No panels plotted.';
       }
