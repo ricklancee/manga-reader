@@ -15,8 +15,9 @@ class Panels {
       this.fileUploadButton = document.querySelector('.upload-files');
 
       // Variables
+      this.pages = [];
+      this.currentPageIndex = null;
       this.loadedImages = [];
-      this.currentLoadedImageIndex = null;
       this.currentPanels = [];
       this.currentPath = [];
       this.currentPathEl = null;
@@ -25,6 +26,7 @@ class Panels {
 
       this.shiftModifier = false;
       this.zoom = 1;
+      this.noPanelText = 'No panels drawn.';
 
       this._addEventListeners();
 
@@ -59,6 +61,13 @@ class Panels {
             const panel = this._calculateRectangle(path);
             panel.path = path.join(', ');
             this.currentPanels.push(panel);
+
+            const pageObject = this._getCurrentPageObject();
+            pageObject.panels.push(panel);
+            this._sortPages();
+
+            console.log(this.pages);
+
             this._updatePlotpoints();
           }
 
@@ -106,16 +115,20 @@ class Panels {
           e.clearSelection();
       });
 
-      this.clearButton.addEventListener('click', this._clearAllPanels.bind(this));
+      this.clearButton.addEventListener('click', this._clearAllCurrentPanels.bind(this));
       this.zoomInButton.addEventListener('click', this._zoomIn.bind(this));
       this.zoomOutButton.addEventListener('click', this._zoomOut.bind(this));
-
       this.fileUploadButton.addEventListener('change', this._handleFileSelect.bind(this));
 
       window.addEventListener('click', (event) => {
         const closestContainer = this._closest(event.target, 'result');
 
-        if (closestContainer) {
+        // If we clicked on a new page link
+        if (
+          closestContainer &&
+          parseInt(closestContainer.getAttribute('data-index'), 10) !== this.currentPageIndex
+        ) {
+
           const image = this._getImageByFilename(closestContainer.getAttribute('data-filename'));
 
           if (image) {
@@ -166,8 +179,11 @@ class Panels {
       this._setSvgDimensionsToImage();
     }
 
-    _clearAllPanels() {
-      // this.plotpoints.innerHTML = 'No panels plotted.';
+    _clearAllCurrentPanels() {
+      const codeContainer = document.querySelector('.result[data-index="'+this.currentPageIndex+'"] code');
+
+      codeContainer.innerHTML = this.noPanelText;
+
       this.currentPanels = [];
       this.svg.querySelectorAll('path').forEach(pathEl => {
         pathEl.remove();
@@ -280,15 +296,15 @@ class Panels {
       if (this.currentPanels.length > 0) {
         data = JSON.stringify(this.currentPanels, null, 2);
       } else {
-        data = 'No panels plotted.';
+        data = this.noPanelText;
       }
 
-      const container = document.querySelector('.result[data-index="'+this.currentLoadedImageIndex+'"] code');
+      const container = document.querySelector('.result[data-index="'+this.currentPageIndex+'"] code');
       container.innerHTML = data;
     }
 
     _setImage(index) {
-      this.currentLoadedImageIndex = index;
+      this.currentPageIndex = index;
       const image = this.loadedImages[index];
 
       this._loadImage(image.data);
@@ -299,7 +315,7 @@ class Panels {
     }
 
     _loadImage(image) {
-      this._clearAllPanels();
+      this._clearAllCurrentPanels();
 
       this.pageImage.src = image;
 
@@ -383,6 +399,27 @@ class Panels {
       return images;
     }
 
+    _sortPages() {
+      this.pages.sort((a, b) => {
+        const imageA = parseInt(
+          a.image.replace(/\.(gif|jpg|jpeg|tiff|png)$/i, ''), 10
+        );
+        const imageB = parseInt(
+          b.image.replace(/\.(gif|jpg|jpeg|tiff|png)$/i, ''), 10
+        );
+
+        if (imageA < imageB) {
+          return -1;
+        }
+
+        if (imageA > imageB) {
+          return 1;
+        }
+
+        return 0;
+      });
+    }
+
     _getImageByFilename(filename) {
       const index = this.loadedImages.findIndex(element => {
         if (element.filename === filename) {
@@ -396,6 +433,32 @@ class Panels {
       }
 
       return this.loadedImages[index];
+    }
+
+    _getCurrentPageObject() {
+      let pageObject;
+
+      const imageIndex = this.currentPageIndex;
+      const filename = this.loadedImages[imageIndex].filename;
+
+      const pageObjectIndex = this.pages.findIndex(element => {
+        if (element.image === filename) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (pageObjectIndex === -1) {
+        this.pages.push({
+          image: filename,
+          panels: []
+        });
+
+        return this.pages[this.pages.length - 1];
+      }
+
+      return this.pages[pageObjectIndex];
     }
 
     _fillResultsContainer(sorted) {
@@ -434,7 +497,7 @@ class Panels {
 
       label.appendChild(spanTitle);
       label.appendChild(spanButton);
-      code.innerHTML = 'No panels plotted.';
+      code.innerHTML = this.noPanelText;
 
       pre.appendChild(code);
 
