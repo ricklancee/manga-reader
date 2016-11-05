@@ -74,7 +74,7 @@ The `path` property is the clipping path of the panel.
 ![How clipping works](https://github.com/ricklancee/manga-reader/blob/master/clip-preview.jpg?raw=true)  
 
 ### Browser support
-Polyfills for the WebComponents, Promise, URL and Fetch APIs are required for browsers that don't support them. Polyfills are loaded with the `polyfills.js` file.
+Polyfills for the WebComponents, Promise, URL and Fetch APIs are required for browsers that don't support them. Polyfills can be loaded with the `polyfills.js` file within the `polyfills/` directory. When using the polyfills you need to wait for the `polyfillsLoaded` event in order to initialize the reader (see `example/basic/` for an example).
 
 - Chrome  
 - Firefox  
