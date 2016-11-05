@@ -78,7 +78,6 @@ class MangaReader extends HTMLElement {
 
       this._setPage(this.currentPageIndex)
         .then(_ => {
-          this._recalcPage();
           this._drawPanels(this.currentPanelIndex);
           this._setPaginationHash();
           this._setActivePagination();
@@ -281,6 +280,7 @@ class MangaReader extends HTMLElement {
   }
 
   _setPage(index) {
+
       const imageUrl = this.pages[index].image;
 
       // Clear the canvas;
@@ -291,7 +291,10 @@ class MangaReader extends HTMLElement {
         this._loadImage(imageUrl)
           .then(image => {
             this.currentImage = image;
+
             this._drawPage(image);
+            this._recalcPage();
+
             resolve();
           });
       });
@@ -404,7 +407,6 @@ class MangaReader extends HTMLElement {
         this._hideLoading();
       }
 
-      this._recalcPage();
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
       this._setActivePagination();
@@ -425,7 +427,6 @@ class MangaReader extends HTMLElement {
     this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
 
     return this._setPage(this.currentPageIndex).then(_ => {
-      this._recalcPage();
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
       this._setActivePagination();
