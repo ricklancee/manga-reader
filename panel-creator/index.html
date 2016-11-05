@@ -65,9 +65,7 @@
         margin-top: 0;
       }
       .plotpoints pre {
-        flex: 1;
         margin: 0;
-        margin-top: 10px;
         overflow: scroll;
         background-color: #f9f9f9;
       }
@@ -100,6 +98,51 @@
         margin-left: 5px;
       }
 
+      .results {
+        margin-top: 10px;
+        flex: 1;
+        overflow: scroll;
+      }
+
+      .result label {
+        display: flex;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #d4d4d4;
+        cursor: pointer;
+      }
+
+      .result label span:first-child {
+        flex: 1;
+        text-decoration: underline;
+      }
+
+      .result label:hover span:first-child,
+      .result.active span:first-child {
+        text-decoration: none;
+      }
+      .result.active label {
+        font-weight: bold;
+      }
+
+
+      .result label span:last-child:before {
+        content: '+';
+      }
+      .result.active label span:last-child:before {
+        content: '-';
+      }
+
+      .result pre {
+        display: none;
+      }
+      .result.active pre {
+        display: block;
+      }
+      .result.active pre {
+
+
+
     </style>
 </head>
 <body>
@@ -123,7 +166,7 @@
         <strong>Press shift-+/-</strong> to zoom in or out.
         </p>
 
-        <pre><code>No panels plotted.</code></pre>
+        <div class="results"></div>
 
         <div class="buttons">
           <button class="copy-button" data-clipboard-target=".plotpoints code">Copy panels</button>
