@@ -62,12 +62,7 @@ class Panels {
             panel.path = path.join(', ');
             this.currentPanels.push(panel);
 
-            const pageObject = this._getCurrentPageObject();
-            pageObject.panels.push(panel);
-            this._sortPages();
-
-            console.log(this.pages);
-
+            this._updatePagesData();
             this._updatePlotpoints();
           }
 
@@ -103,7 +98,11 @@ class Panels {
         this._setSvgDimensionsToImage();
       });
 
-      var clipboard = new Clipboard('.copy-button');
+      var clipboard = new Clipboard('.copy-button', {
+        text: (trigger) => {
+          return JSON.stringify(this.pages, null, 2);
+        }
+      });
 
       clipboard.on('success', function(e) {
           const text = e.trigger.innerHTML;
@@ -134,6 +133,7 @@ class Panels {
           if (image) {
             const index = this.loadedImages.indexOf(image);
             this._setImage(index);
+            this._redrawCurrentPanelPaths();
           }
         }
       });
@@ -180,14 +180,13 @@ class Panels {
     }
 
     _clearAllCurrentPanels() {
-      const codeContainer = document.querySelector('.result[data-index="'+this.currentPageIndex+'"] code');
-
-      codeContainer.innerHTML = this.noPanelText;
-
-      this.currentPanels = [];
       this.svg.querySelectorAll('path').forEach(pathEl => {
         pathEl.remove();
       });
+
+      this.currentPanels = [];
+      this._updatePlotpoints();
+      this._updatePagesData();
     }
 
     _recalc() {
@@ -252,6 +251,30 @@ class Panels {
       this.svg.appendChild(this.currentPathEl);
     }
 
+    _redrawCurrentPanelPaths() {
+      if (this.currentlyDrawing) {
+        this._closeCurrentPath();
+      }
+
+      for (var i = 0; i < this.currentPanels.length; i++) {
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        const path = this.currentPanels[i].path.split(', ').map((coards, index) => {
+          let xy = coards.split(' ');
+
+          if (index === 0) {
+            return `M${xy[0]} ${xy[1]}`;
+          }
+
+          return `L${xy[0]} ${xy[1]}`;
+        }).join(' ');
+
+        pathEl.setAttribute('d', path + ' Z');
+        pathEl.setAttribute('data-index', i);
+        this.svg.appendChild(pathEl);
+      }
+    }
+
     _resetPathIndexes() {
       let index = 0;
       this.svg.querySelectorAll('path').forEach(pathEl => {
@@ -305,6 +328,16 @@ class Panels {
 
     _setImage(index) {
       this.currentPageIndex = index;
+
+      if (
+        !this.pages[this.currentPageIndex] ||
+        this.pages[this.currentPageIndex].panels.length === 0
+      ) {
+        this.currentPanels = [];
+      } else {
+        this.currentPanels = this.pages[this.currentPageIndex].panels;
+      }
+
       const image = this.loadedImages[index];
 
       this._loadImage(image.data);
@@ -314,10 +347,29 @@ class Panels {
       this._setZoom();
     }
 
-    _loadImage(image) {
-      this._clearAllCurrentPanels();
+    _updatePagesData() {
+      console.log(this.currentPageIndex);
 
+      if (!this.pages[this.currentPageIndex]) {
+        const filename = this.loadedImages[this.currentPageIndex].filename;
+        this.pages.push({
+          image: filename,
+          panels: []
+        });
+      }
+
+      this.pages[this.currentPageIndex].panels = this.currentPanels;
+
+      this._sortPages();
+      console.log(this.pages);
+    }
+
+    _loadImage(image) {
       this.pageImage.src = image;
+
+      this.svg.querySelectorAll('path').forEach(pathEl => {
+        pathEl.remove();
+      });
 
       this.pageImage.style.width = '';
       this._recalc();
@@ -433,32 +485,6 @@ class Panels {
       }
 
       return this.loadedImages[index];
-    }
-
-    _getCurrentPageObject() {
-      let pageObject;
-
-      const imageIndex = this.currentPageIndex;
-      const filename = this.loadedImages[imageIndex].filename;
-
-      const pageObjectIndex = this.pages.findIndex(element => {
-        if (element.image === filename) {
-          return true;
-        }
-
-        return false;
-      });
-
-      if (pageObjectIndex === -1) {
-        this.pages.push({
-          image: filename,
-          panels: []
-        });
-
-        return this.pages[this.pages.length - 1];
-      }
-
-      return this.pages[pageObjectIndex];
     }
 
     _fillResultsContainer(sorted) {
