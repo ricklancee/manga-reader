@@ -74,44 +74,45 @@ var MangaReader = function (_HTMLElement) {
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
 
+      // Events
+      this.loadedEvent = new CustomEvent('loaded');
+
       this._createCanvas();
       this._addEventListeners();
 
       // Start a loadingSpinner after 250 milliseconds.
       this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
-      this.loaded = new Promise(function (resolve) {
-        _this2._loadData().then(function (data) {
-          _this2.data = data;
-          _this2.pages = _this2.data.pages;
+      this._loadData().then(function (data) {
+        _this2.data = data;
+        _this2.pages = _this2.data.pages;
 
-          _this2._createPagination();
+        _this2._createPagination();
 
-          var hashPagination = _this2._getPaginationFromHash();
-          if (hashPagination) {
-            _this2.currentPageIndex = hashPagination[0];
-            _this2.currentPanelIndex = hashPagination[1];
+        var hashPagination = _this2._getPaginationFromHash();
+        if (hashPagination) {
+          _this2.currentPageIndex = hashPagination[0];
+          _this2.currentPanelIndex = hashPagination[1];
+        }
+
+        _this2._setPage(_this2.currentPageIndex).then(function (_) {
+          _this2._recalcPage();
+          _this2._drawPanels(_this2.currentPanelIndex);
+          _this2._setPaginationHash();
+          _this2._setActivePagination();
+          _this2._positionView();
+          if (_this2._preloadPages) {
+            _this2._preloadNextPage();
           }
 
-          _this2._setPage(_this2.currentPageIndex).then(function (_) {
-            _this2._recalcPage();
-            _this2._drawPanels(_this2.currentPanelIndex);
-            _this2._setPaginationHash();
-            _this2._setActivePagination();
-            _this2._positionView();
-            if (_this2._preloadPages) {
-              _this2._preloadNextPage();
-            }
+          // Clear the timer.
+          if (_this2._loadingTimer) {
+            window.clearTimeout(_this2._loadingTimer);
+            _this2._hideLoading();
+            _this2._loadingTimer = null;
+          }
 
-            // Clear the timer.
-            if (_this2._loadingTimer) {
-              window.clearTimeout(_this2._loadingTimer);
-              _this2._hideLoading();
-              _this2._loadingTimer = null;
-            }
-
-            resolve();
-          });
+          _this2.dispatchEvent(_this2.loadedEvent);
         });
       });
     }
@@ -158,6 +159,10 @@ var MangaReader = function (_HTMLElement) {
 
       window.addEventListener('resize', function (_) {
         _this3._recalcPage();
+      });
+
+      this.canvasEl.addEventListener('click', function (event) {
+        _this3.nextPanel();
       });
 
       window.addEventListener('keydown', function (event) {
@@ -359,7 +364,7 @@ var MangaReader = function (_HTMLElement) {
       this.canvas.save();
       this.canvas.beginPath();
       for (var i = 0; i < len; i++) {
-        var coards = path[i].split(' ');
+        var coards = path[i].trim().split(' ');
 
         var x = coards[0] * this.canvasEl.width / 100;
         var y = coards[1] * this.canvasEl.height / 100;
