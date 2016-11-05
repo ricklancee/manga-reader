@@ -8,13 +8,19 @@ Navigate using the arrow keys or use the pagination.
 
 ### How it works
 
-The reader is added to the html page.
+The reader is a custom HTML element which can be added to the page. 
 
 ```html
 <manga-reader data="manga/one/data.json"></manga-reader>
 ```
 
-Pages are loaded with a manga json file. The json file looks as follows:
+The custom element does need to be registered with the browser first; Which can be done like so:
+
+```js
+document.registerElement('manga-reader', MangaReader);
+```
+
+Pages are loaded with a manga json file specified in the `data` attribute on the `<manga-reader>` element. The json file looks as follows:
 
 ```json
 {
