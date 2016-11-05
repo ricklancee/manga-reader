@@ -15,6 +15,12 @@
       <manga-reader data="manga/one/data.json"></manga-reader>
     </main>
 
+    <script src="polyfills/polyfills.js"></script>
     <script src="reader.min.js"></script>
+    <script>
+      window.addEventListener('polyfillsLoaded', function() {
+        document.registerElement('manga-reader', MangaReader);
+      });
+    </script>
 </body>
 </html>
