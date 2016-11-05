@@ -90,6 +90,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 3. Build es5 & minifiy files `npm run build`
 
 ### Todo
+- Feature: add side by side view (fitscreen/no-fitscreen view)
 - Option to disable 'panel by panel' mode in reader
 - Add manga meta data example
 - Add pagination example
