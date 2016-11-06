@@ -27,14 +27,15 @@
 class MangaReader extends HTMLElement {
 
   createdCallback() {
-    this.data = this.getAttribute('data');
+    this.dataFile = this.getAttribute('data');
 
-    if (!this.data) {
+    if (!this.dataFile) {
       return;
     }
 
-    this.basePath = this.data.substring(0, this.data.lastIndexOf('data.json'));
+    this.basePath = this.dataFile.substring(0, this.dataFile.lastIndexOf('data.json'));
 
+    this.data = null;
     this.pages = null;
     this.currentPageIndex = 0;
     this.currentPanelIndex = 0;
@@ -61,15 +62,19 @@ class MangaReader extends HTMLElement {
     this._createCanvas();
     this._addEventListeners();
 
-    // Start a loadingSpinner after 250 milliseconds.
+    // Start a loadingSpinner after 300 milliseconds
+    // to avoid an loader popping up even if the page
+    // renders fast enogh.
     this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
-    this._loadData().then(data => {
+    this._loadData(this.dataFile).then(data => {
       this.data = data;
       this.pages = this.data.pages;
 
       this._createPagination();
 
+      // Check if there is a current page and panel pagination
+      // in the location.hash.
       const hashPagination = this._getPaginationFromHash();
       if (hashPagination) {
         this.currentPageIndex = hashPagination[0];
@@ -82,6 +87,7 @@ class MangaReader extends HTMLElement {
           this._setPaginationHash();
           this._setActivePagination();
           this._positionView();
+
           if (this._preloadPages) {
             this._preloadNextPage();
           }
@@ -162,7 +168,6 @@ class MangaReader extends HTMLElement {
     const spinner = document.createElement('div');
     spinner.classList.add('manga-reader__spinner');
     this.appendChild(spinner);
-    console.log('Show loading!!');
   }
 
   _hideLoading() {
@@ -195,9 +200,9 @@ class MangaReader extends HTMLElement {
     }
   }
 
-  _loadData() {
+  _loadData(data) {
     return new Promise((resolve, reject) => {
-      fetch(this.data)
+      fetch(data)
         .then(response => { return response.json() })
         .then(resolve)
         .catch(reject)
@@ -206,9 +211,9 @@ class MangaReader extends HTMLElement {
 
   _loadImage(url) {
 
-    // If the image url is an remote url
-    // use that, otherwise append the base path of the
-    // json.
+    // If the to be loaded image url is full url
+    // load the image from there, otherwise use the url
+    // relative to the data file.
     try {
       new URL(url);
     } catch(e) {
@@ -233,9 +238,13 @@ class MangaReader extends HTMLElement {
   }
 
   _preloadNextPage() {
+    // Currently we only pre load next pages, so there
+    // is no need to check if we are at the first page, only
+    // the last.
     if (this.currentPageIndex == this.pages.length - 1) {
       return;
     }
+
     const nextPage = this.currentPageIndex + 1;
     const nextPageImage = this.pages[nextPage].image;
 
@@ -274,13 +283,13 @@ class MangaReader extends HTMLElement {
       list.appendChild(li);
     }
 
+    // Insert pagination as the first and last children of
+    // the reader.
     this.insertBefore(list, this.firstChild);
-
-    this.lastChild.parentNode.insertBefore(list.cloneNode(true), this.lastChild.nextSibling);
+    this.appendChild(list.cloneNode(true));
   }
 
   _setPage(index) {
-
       const imageUrl = this.pages[index].image;
 
       // Clear the canvas;
@@ -314,23 +323,32 @@ class MangaReader extends HTMLElement {
     const max = this.pages[this.currentPageIndex].panels.length;
     const len = Math.min(Math.max(parseInt(to + 1), 0), max);
 
+    // Because of the way canvas works we need all panels up
+    // to and including the desired one.
     for (var i = 0; i < len; i++) {
       this._drawPanel(i);
     }
   }
 
   _drawPanel(index) {
+    // The path needs to be split in order to work with it.
     const path = this.pages[this.currentPageIndex].panels[index].path.split(',');
     const len = path.length;
 
     this.canvas.save();
+
+    // First we draw a clipping path for the panel
     this.canvas.beginPath();
     for (var i = 0; i < len; i++) {
       const coards = path[i].trim().split(' ');
 
+      // The svg path's coardinates commands need to be in pixels
+      // instead of percentages. Svg path do not work with %s.
       const x = coards[0] * this.canvasEl.width / 100;
       const y = coards[1] * this.canvasEl.height / 100;
 
+      // The first element in the path needs to
+      // be the M(ove) command/
       if (len == 0) {
         this.canvas.moveTo(x, y);
       } else {
@@ -340,6 +358,7 @@ class MangaReader extends HTMLElement {
     this.canvas.closePath();
     this.canvas.clip();
 
+    // And draw the image, which clipped by the clipping path.
     this.canvas.drawImage(this.currentImage, 0, 0);
 
     this.canvas.restore();
@@ -362,6 +381,8 @@ class MangaReader extends HTMLElement {
       return;
     }
 
+    // We need to redraw the entire page and all panels up to the
+    // next one.
     this._drawPage(this.currentImage);
     this._drawPanels(this.currentPanelIndex);
     this._setPaginationHash();
@@ -391,6 +412,8 @@ class MangaReader extends HTMLElement {
   }
 
   nextPage() {
+    // If we have reached the end return an empty promise
+    // because it's 'then-able'.
     if (this.currentPageIndex == this.pages.length - 1) {
       return new Promise(resolve => {});
     }
@@ -398,6 +421,7 @@ class MangaReader extends HTMLElement {
     this.currentPageIndex++;
     this.currentPanelIndex = 0;
 
+    // Show a loading spinner if it takes too long.
     this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
     return this._setPage(this.currentPageIndex).then(_ => {
@@ -426,6 +450,8 @@ class MangaReader extends HTMLElement {
     this.currentPageIndex--;
     this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
 
+    // The previous page is most likely in the cache
+    // so we don't need to preload or show a spinner.
     return this._setPage(this.currentPageIndex).then(_ => {
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
