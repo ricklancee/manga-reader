@@ -99,15 +99,16 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 3. Build es5 & minifiy files `npm run build`
 
 ### Todo
-- Feature: add side by side view (fitscreen/no-fitscreen view)
-- Option to disable 'panel by panel' mode in reader
-- Add chapter support
-- Add manga meta data example
-- Add pagination example
-- Add autoview example
-- Add Edge browser support
-- ?? -> Add panel effects
-- ?? -> Move out key event listeners, these should not be inside the class.
+- Feature: Side by side view (fitscreen/no-fitscreen view)
+- Add: Option to disable 'panel by panel' mode in reader
+- Add: chapter support
+- Add: manga meta data example
+- Fix: pagination example
+- Add: autoview example
+- Add: Edge browser support
+- ?? -> Add: panel effects
+- ?? -> Fix: Move out key event listeners, these should not be inside the class.
+- ?? -> Feature: Use shadow dom for css and html
 - ~~Loading Spinner when pages and files are beign loaded~~
 - ~~Create an examples/ directory.~~
 - ~~Preloading pages~~
