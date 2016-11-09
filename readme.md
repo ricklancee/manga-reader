@@ -99,6 +99,7 @@ ES6 files need to be converted to ES5 in order to ensure maximum browser support
 3. Build es5 & minifiy files `npm run build`
 
 ### Todo
+- Fix: Mobile issues
 - Add: Getting started secting in the readme
 - Feature: Side by side view (fitscreen/no-fitscreen view)
 - Add: Option to disable 'panel by panel' mode in reader
