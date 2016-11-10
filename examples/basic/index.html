@@ -41,11 +41,12 @@
     </main>
 
     <!-- scripts -->
-    <script src="../../polyfills/polyfills.js"></script>
+    <script src="../bower_components/polyfill-loader/polyfill.min.js"></script>
+    <script src="../polyfills.js"></script>
     <script src="../../reader.js"></script>
     <script>
-      // Initialize the reader
       window.addEventListener('polyfillsLoaded', function() {
+        console.log('loaded polyfills');
         document.registerElement('manga-reader', MangaReader);
       });
     </script>

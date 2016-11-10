@@ -83,7 +83,7 @@ The `path` property is the clipping path of the panel.
 Creating the panels is easy with the *Panel Creator* app in [ricklancee/manga-panel-creator](https://github.com/ricklancee/manga-panel-creator). Load the images into the app and follow the instructions.
 
 ### Browser support
-Polyfills for the WebComponents, Promise, URL and Fetch APIs are required for browsers that don't support them. Polyfills can be loaded with the `polyfills.js` file within the `polyfills/` directory. When using the polyfills you need to wait for the `polyfillsLoaded` event in order to initialize the reader (see `example/basic/` for an example).
+Polyfills for the WebComponents, Promise, URL and Fetch APIs are required for browsers that don't support them. Polyfills can be loaded with the `polyfills.js` file within the `polyfills/` directory. When using the polyfills you need to wait for the `polyfillsLoaded` event in order to initialize the reader (see `examples/basic/` for an example).
 
 - Chrome  
 - Firefox  

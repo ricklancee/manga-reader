@@ -1,0 +1,11 @@
+{
+  "name": "examples",
+  "private": true,
+  "dependencies": {
+    "promise-polyfill": "^6.0.2",
+    "fetch": "^1.0.0",
+    "webcomponentsjs": "^0.7.23",
+    "polyfill-loader": "^0.2.1",
+    "URL": "git://github.com/Polymer/URL.git#^0.5.6"
+  }
+}
