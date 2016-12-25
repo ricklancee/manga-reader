@@ -226,7 +226,7 @@ class MangaReader extends HTMLElement {
       };
 
       img.onerror = _ => {
-        reject('failed to load image');
+        reject(`Failed to load image with uri: "${url}"`);
       };
 
       img.src = url;
