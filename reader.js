@@ -411,14 +411,16 @@ class MangaReader extends HTMLElement {
   nextPage() {
     // If we have reached the end return an empty promise
     // because it's 'then-able'.
-    if (this.currentPageIndex == this.pages.length - 1) {
-      return new Promise(resolve => {});
+    if (this.currentPageIndex === this.pages.length - 1) {
+      return Promise.resolve();
     }
 
     this.currentPageIndex++;
     this.currentPanelIndex = 0;
 
     // Show a loading spinner if it takes too long.
+    // Pages should have been preloaded if the option is set
+    // but if it still takes too long then show a spinner.
     this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
     return this._setPage(this.currentPageIndex).then(_ => {
@@ -440,8 +442,8 @@ class MangaReader extends HTMLElement {
   }
 
   previousPage() {
-    if (this.currentPageIndex == 0) {
-      return new Promise(resolve => {});
+    if (this.currentPageIndex === 0) {
+      return Promise.resolve();
     }
 
     this.currentPageIndex--;
