@@ -286,22 +286,16 @@ class MangaReader extends HTMLElement {
   }
 
   _setPage(index) {
-      const imageUrl = this.pages[index].image;
+    const imageUrl = this.pages[index].image;
 
-      // Clear the canvas;
-      this.canvas.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+    // Clear the canvas;
+    this.canvas.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
-      return new Promise(resolve => {
-
-        this._loadImage(imageUrl)
-          .then(image => {
-            this.currentImage = image;
-
-            this._drawPage(image);
-            this._recalcPage();
-
-            resolve();
-          });
+    return this._loadImage(imageUrl)
+      .then(image => {
+        this.currentImage = image;
+        this._drawPage(image);
+        this._recalcPage();
       });
   }
 
