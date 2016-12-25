@@ -26,13 +26,13 @@
 class MangaReader extends HTMLElement {
 
   createdCallback() {
-    this.dataFile = this.getAttribute('data');
+    this.dataFileUri = this.getAttribute('data');
 
-    if (!this.dataFile) {
+    if (!this.dataFileUri) {
       return;
     }
 
-    this.basePath = this.dataFile.substring(0, this.dataFile.lastIndexOf('data.json'));
+    this.basePath = this.dataFileUri.substring(0, this.dataFileUri.lastIndexOf('data.json'));
 
     this.data = null;
     this.pages = null;
@@ -66,7 +66,7 @@ class MangaReader extends HTMLElement {
     // renders fast enogh.
     this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
-    this._loadData(this.dataFile).then(data => {
+    this._loadData(this.dataFileUri).then(data => {
       this.data = data;
       this.pages = this.data.pages;
 
