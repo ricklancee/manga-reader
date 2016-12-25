@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 'use strict';
 
 class MangaReader extends HTMLElement {
@@ -134,9 +133,10 @@ class MangaReader extends HTMLElement {
   }
 
   _setActivePagination() {
-    Array.from(this.querySelectorAll('.pagination a')).forEach(link => link.classList.remove('active'));
+    Array.from(this.querySelectorAll('.pagination a'))
+      .forEach(link => link.classList.remove('active'));
     Array.from(this.querySelectorAll('.pagination a[data-index="'+this.currentPageIndex+'"]'))
-    .forEach(link => link.classList.add('active'));
+      .forEach(link => link.classList.add('active'));
   }
 
   _addEventListeners() {
@@ -200,13 +200,9 @@ class MangaReader extends HTMLElement {
     }
   }
 
-  _loadData(data) {
-    return new Promise((resolve, reject) => {
-      fetch(data)
-        .then(response => { return response.json() })
-        .then(resolve)
-        .catch(reject)
-    });
+  _loadData(uri) {
+    return fetch(uri)
+      .then(response => response.json() )
   }
 
   _loadImage(url) {
