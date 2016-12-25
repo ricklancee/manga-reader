@@ -91,13 +91,19 @@ class MangaReader extends HTMLElement {
             this._preloadNextPage();
           }
 
-          // Clear the timer.
+          // Clear the timer; If the above code executed below 300ms
+          // the user won't see a loading spinner. Why? Because <300ms
+          // can be seen as 'instant' for the user. Showing a spinner
+          // might feel 'off'.
           if (this._loadingTimer) {
             window.clearTimeout(this._loadingTimer);
             this._hideLoading();
             this._loadingTimer = null;
           }
 
+          // Dispatch the 'loaded' event on the element
+          // the user might want to do something when the reader
+          // has been loaded.
           this.dispatchEvent(this.loadedEvent);
         });
     });
@@ -395,6 +401,7 @@ class MangaReader extends HTMLElement {
       return;
     }
 
+    // This is duplication but not enough to refactor... propably.
     this._drawPage(this.currentImage);
     this._drawPanels(this.currentPanelIndex);
     this._setPaginationHash();
