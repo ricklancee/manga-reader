@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -46,14 +45,15 @@ var MangaReader = function (_HTMLElement) {
     value: function createdCallback() {
       var _this2 = this;
 
-      this.data = this.getAttribute('data');
+      this.dataFileUri = this.getAttribute('data');
 
-      if (!this.data) {
+      if (!this.dataFileUri) {
         return;
       }
 
-      this.basePath = this.data.substring(0, this.data.lastIndexOf('data.json'));
+      this.basePath = this.dataFileUri.substring(0, this.dataFileUri.lastIndexOf('data.json'));
 
+      this.data = null;
       this.pages = null;
       this.currentPageIndex = 0;
       this.currentPanelIndex = 0;
@@ -80,15 +80,19 @@ var MangaReader = function (_HTMLElement) {
       this._createCanvas();
       this._addEventListeners();
 
-      // Start a loadingSpinner after 250 milliseconds.
+      // Start a loadingSpinner after 300 milliseconds
+      // to avoid an loader popping up even if the page
+      // renders fast enogh.
       this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
-      this._loadData().then(function (data) {
+      this._loadData(this.dataFileUri).then(function (data) {
         _this2.data = data;
         _this2.pages = _this2.data.pages;
 
         _this2._createPagination();
 
+        // Check if there is a current page and panel pagination
+        // in the location.hash.
         var hashPagination = _this2._getPaginationFromHash();
         if (hashPagination) {
           _this2.currentPageIndex = hashPagination[0];
@@ -96,22 +100,28 @@ var MangaReader = function (_HTMLElement) {
         }
 
         _this2._setPage(_this2.currentPageIndex).then(function (_) {
-          _this2._recalcPage();
           _this2._drawPanels(_this2.currentPanelIndex);
           _this2._setPaginationHash();
           _this2._setActivePagination();
           _this2._positionView();
+
           if (_this2._preloadPages) {
             _this2._preloadNextPage();
           }
 
-          // Clear the timer.
+          // Clear the timer; If the above code executed below 300ms
+          // the user won't see a loading spinner. Why? Because <300ms
+          // can be seen as 'instant' for the user. Showing a spinner
+          // might feel 'off'.
           if (_this2._loadingTimer) {
             window.clearTimeout(_this2._loadingTimer);
             _this2._hideLoading();
             _this2._loadingTimer = null;
           }
 
+          // Dispatch the 'loaded' event on the element
+          // the user might want to do something when the reader
+          // has been loaded.
           _this2.dispatchEvent(_this2.loadedEvent);
         });
       });
@@ -188,7 +198,6 @@ var MangaReader = function (_HTMLElement) {
       var spinner = document.createElement('div');
       spinner.classList.add('manga-reader__spinner');
       this.appendChild(spinner);
-      console.log('Show loading!!');
     }
   }, {
     key: '_hideLoading',
@@ -227,22 +236,18 @@ var MangaReader = function (_HTMLElement) {
     }
   }, {
     key: '_loadData',
-    value: function _loadData() {
-      var _this4 = this;
-
-      return new Promise(function (resolve, reject) {
-        fetch(_this4.data).then(function (response) {
-          return response.json();
-        }).then(resolve).catch(reject);
+    value: function _loadData(uri) {
+      return fetch(uri).then(function (response) {
+        return response.json();
       });
     }
   }, {
     key: '_loadImage',
     value: function _loadImage(url) {
 
-      // If the image url is an remote url
-      // use that, otherwise append the base path of the
-      // json.
+      // If the to be loaded image url is full url
+      // load the image from there, otherwise use the url
+      // relative to the data file.
       try {
         new URL(url);
       } catch (e) {
@@ -259,7 +264,7 @@ var MangaReader = function (_HTMLElement) {
         };
 
         img.onerror = function (_) {
-          reject('failed to load image');
+          reject('Failed to load image with uri: "' + url + '"');
         };
 
         img.src = url;
@@ -268,9 +273,13 @@ var MangaReader = function (_HTMLElement) {
   }, {
     key: '_preloadNextPage',
     value: function _preloadNextPage() {
+      // Currently we only pre load next pages, so there
+      // is no need to check if we are at the first page, only
+      // the last.
       if (this.currentPageIndex == this.pages.length - 1) {
         return;
       }
+
       var nextPage = this.currentPageIndex + 1;
       var nextPageImage = this.pages[nextPage].image;
 
@@ -311,27 +320,25 @@ var MangaReader = function (_HTMLElement) {
         list.appendChild(li);
       }
 
+      // Insert pagination as the first and last children of
+      // the reader.
       this.insertBefore(list, this.firstChild);
-
-      this.lastChild.parentNode.insertBefore(list.cloneNode(true), this.lastChild.nextSibling);
+      this.appendChild(list.cloneNode(true));
     }
   }, {
     key: '_setPage',
     value: function _setPage(index) {
-      var _this5 = this;
+      var _this4 = this;
 
       var imageUrl = this.pages[index].image;
 
       // Clear the canvas;
       this.canvas.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
-      return new Promise(function (resolve) {
-
-        _this5._loadImage(imageUrl).then(function (image) {
-          _this5.currentImage = image;
-          _this5._drawPage(image);
-          resolve();
-        });
+      return this._loadImage(imageUrl).then(function (image) {
+        _this4.currentImage = image;
+        _this4._drawPage(image);
+        _this4._recalcPage();
       });
     }
   }, {
@@ -351,6 +358,8 @@ var MangaReader = function (_HTMLElement) {
       var max = this.pages[this.currentPageIndex].panels.length;
       var len = Math.min(Math.max(parseInt(to + 1), 0), max);
 
+      // Because of the way canvas works we need all panels up
+      // to and including the desired one.
       for (var i = 0; i < len; i++) {
         this._drawPanel(i);
       }
@@ -358,17 +367,24 @@ var MangaReader = function (_HTMLElement) {
   }, {
     key: '_drawPanel',
     value: function _drawPanel(index) {
+      // The path needs to be split in order to work with it.
       var path = this.pages[this.currentPageIndex].panels[index].path.split(',');
       var len = path.length;
 
       this.canvas.save();
+
+      // First we draw a clipping path for the panel
       this.canvas.beginPath();
       for (var i = 0; i < len; i++) {
         var coards = path[i].trim().split(' ');
 
+        // The svg path's coardinates commands need to be in pixels
+        // instead of percentages. Svg path do not work with %s.
         var x = coards[0] * this.canvasEl.width / 100;
         var y = coards[1] * this.canvasEl.height / 100;
 
+        // The first element in the path needs to
+        // be the M(ove) command/
         if (len == 0) {
           this.canvas.moveTo(x, y);
         } else {
@@ -378,6 +394,7 @@ var MangaReader = function (_HTMLElement) {
       this.canvas.closePath();
       this.canvas.clip();
 
+      // And draw the image, which clipped by the clipping path.
       this.canvas.drawImage(this.currentImage, 0, 0);
 
       this.canvas.restore();
@@ -401,6 +418,8 @@ var MangaReader = function (_HTMLElement) {
         return;
       }
 
+      // We need to redraw the entire page and all panels up to the
+      // next one.
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
@@ -424,6 +443,7 @@ var MangaReader = function (_HTMLElement) {
         return;
       }
 
+      // This is duplication but not enough to refactor... propably.
       this._drawPage(this.currentImage);
       this._drawPanels(this.currentPanelIndex);
       this._setPaginationHash();
@@ -432,53 +452,58 @@ var MangaReader = function (_HTMLElement) {
   }, {
     key: 'nextPage',
     value: function nextPage() {
-      var _this6 = this;
+      var _this5 = this;
 
-      if (this.currentPageIndex == this.pages.length - 1) {
-        return new Promise(function (resolve) {});
+      // If we have reached the end return an empty promise
+      // because it's 'then-able'.
+      if (this.currentPageIndex === this.pages.length - 1) {
+        return Promise.resolve();
       }
 
       this.currentPageIndex++;
       this.currentPanelIndex = 0;
 
+      // Show a loading spinner if it takes too long.
+      // Pages should have been preloaded if the option is set
+      // but if it still takes too long then show a spinner.
       this._loadingTimer = window.setTimeout(this._showLoading.bind(this), 300);
 
       return this._setPage(this.currentPageIndex).then(function (_) {
-        if (_this6._loadingTimer) {
-          window.clearTimeout(_this6._loadingTimer);
-          _this6._loadingTimer = null;
-          _this6._hideLoading();
+        if (_this5._loadingTimer) {
+          window.clearTimeout(_this5._loadingTimer);
+          _this5._loadingTimer = null;
+          _this5._hideLoading();
         }
 
-        _this6._recalcPage();
-        _this6._drawPanels(_this6.currentPanelIndex);
-        _this6._setPaginationHash();
-        _this6._setActivePagination();
-        _this6._positionView();
+        _this5._drawPanels(_this5.currentPanelIndex);
+        _this5._setPaginationHash();
+        _this5._setActivePagination();
+        _this5._positionView();
 
-        if (_this6._preloadPages) {
-          _this6._preloadNextPage();
+        if (_this5._preloadPages) {
+          _this5._preloadNextPage();
         }
       });
     }
   }, {
     key: 'previousPage',
     value: function previousPage() {
-      var _this7 = this;
+      var _this6 = this;
 
-      if (this.currentPageIndex == 0) {
-        return new Promise(function (resolve) {});
+      if (this.currentPageIndex === 0) {
+        return Promise.resolve();
       }
 
       this.currentPageIndex--;
       this.currentPanelIndex = this.pages[this.currentPageIndex].panels.length - 1;
 
+      // The previous page is most likely in the cache
+      // so we don't need to preload or show a spinner.
       return this._setPage(this.currentPageIndex).then(function (_) {
-        _this7._recalcPage();
-        _this7._drawPanels(_this7.currentPanelIndex);
-        _this7._setPaginationHash();
-        _this7._setActivePagination();
-        _this7._positionView();
+        _this6._drawPanels(_this6.currentPanelIndex);
+        _this6._setPaginationHash();
+        _this6._setActivePagination();
+        _this6._positionView();
       });
     }
   }, {
