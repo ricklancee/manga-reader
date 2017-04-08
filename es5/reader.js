@@ -150,7 +150,7 @@ var MangaReader = function (_HTMLElement) {
 
       if (currentPanel < 10) currentPanel = '0' + currentPanel;
 
-      window.history.pushState({}, null, '#' + currentPage + '-' + currentPanel);
+      window.history.replaceState({}, null, '#' + currentPage + '-' + currentPanel);
     }
   }, {
     key: '_setActivePagination',
