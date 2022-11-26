@@ -24,6 +24,7 @@
 'use strict';
 
 class MangaReader extends HTMLElement {
+  console.log("innside custom element");
 
   createdCallback() {
     this.dataFileUri = this.getAttribute('data');
@@ -141,7 +142,7 @@ class MangaReader extends HTMLElement {
   _setActivePagination() {
     Array.from(this.querySelectorAll('.pagination a'))
       .forEach(link => link.classList.remove('active'));
-    Array.from(this.querySelectorAll('.pagination a[data-index="'+this.currentPageIndex+'"]'))
+    Array.from(this.querySelectorAll('.pagination a[data-index="' + this.currentPageIndex + '"]'))
       .forEach(link => link.classList.add('active'));
   }
 
@@ -208,7 +209,7 @@ class MangaReader extends HTMLElement {
 
   _loadData(uri) {
     return fetch(uri)
-      .then(response => response.json() )
+      .then(response => response.json())
   }
 
   _loadImage(url) {
@@ -218,7 +219,7 @@ class MangaReader extends HTMLElement {
     // relative to the data file.
     try {
       new URL(url);
-    } catch(e) {
+    } catch (e) {
       if (this._appendBasePath) {
         url = this.basePath + url;
       }
@@ -251,7 +252,7 @@ class MangaReader extends HTMLElement {
     const nextPageImage = this.pages[nextPage].image;
 
     this._loadImage(nextPageImage).then(_ => {
-      console.log('preloaded page: '+ (nextPage + 1));
+      console.log('preloaded page: ' + (nextPage + 1));
     });
   }
 
@@ -279,7 +280,7 @@ class MangaReader extends HTMLElement {
       a.innerHTML = page;
       a.classList.add('pagination-link');
       a.setAttribute('data-index', i);
-      a.href = '#'+page+'-01';
+      a.href = '#' + page + '-01';
 
       li.appendChild(a);
       list.appendChild(li);

@@ -1,54 +1,63 @@
 <!doctype html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="author" content="" />
-    <meta name="viewport" content="width=device-width">
-    <title>Manga Reader</title>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="author" content="" />
+  <meta name="viewport" content="width=device-width">
+  <title>Manga Reader</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-      html, body {
-          margin: 0;
-          padding: 0;
-      }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-      body {
-        background: #FAFAFA;
-        font-family: 'Lucida Grande', Arial, sans-serif;
-      }
+    body {
+      background: #FAFAFA;
+      font-family: 'Lucida Grande', Arial, sans-serif;
+    }
 
-      h1 {
-        font-weight: 300;
-        font-size: 14px;
-        text-align: center;
-      }
+    h1 {
+      font-weight: 300;
+      font-size: 14px;
+      text-align: center;
+    }
 
-      label {
-        font-size: 12px;
-        text-transform: uppercase;
-      }
-    </style>
-    <link rel="stylesheet" href="../../reader.css">
+    label {
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+  </style>
+  <link rel="stylesheet" href="../../reader.css">
+
 </head>
-<body>
-    <main>
-      <h1>Manga reader</h1>
-      <manga-reader data="../manga/one/data.json"></manga-reader>
-    </main>
 
-    <!-- scripts -->
-    <script src="../bower_components/polyfill-loader/polyfill.min.js"></script>
-    <script src="../polyfills.js"></script>
-    <script src="../../reader.js"></script>
-    <script>
-      window.addEventListener('polyfillsLoaded', function() {
-        console.log('loaded polyfills');
-        document.registerElement('manga-reader', MangaReader);
-      });
-    </script>
+<body>
+  <main>
+    <h1>Manga reader</h1>
+    <manga-reader data="../manga/one/data.json"></manga-reader>
+  </main>
+
+  <!-- scripts -->
+  <script src="../bower_components/webcomponentsjs/HTMLImports.min.js"></script>
+  <script src="../bower_components/webcomponentsjs/CustomElements.min.js"></script>
+  <script src="../bower_components/polyfill-loader/polyfill.min.js"></script>
+  <script src="../polyfills.js"></script>
+  <script src="../../reader.js"></script>
+
+  <script>
+    window.addEventListener('polyfillsLoaded', function () {
+      console.log('loaded polyfills');
+      customElements.define('manga-reader', MangaReader);
+      console.log("custo element defined");
+    });
+  </script>
 </body>
+
 </html>
